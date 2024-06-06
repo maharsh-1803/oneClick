@@ -5,7 +5,6 @@ var logger = require("morgan");
 var bodyParser = require("body-parser");
 var cors = require('cors');
 
-// Routers
 var admin_router = require("./router/AdminRouter");
 var user_router = require("./router/UserRouter");
 var category_router = require("./router/CategoryRouter");
@@ -19,12 +18,13 @@ var inquiry_router = require("./router/InquiriesRouter");
 var award_router = require("./router/AwardRouter");
 var certificate_router = require("./router/CertificateRouter");
 var chat_router = require("./router/chatRouter");
-
 var app = express();
+var logger = require("morgan");
+var mongoCon = require("./config/db");
 
 // CORS configuration
 const corsOptions = {
-  origin: 'http://localhost:3000', 
+  origin: 'http://localhost:3000', // replace with your frontend's origin
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization']
 };
