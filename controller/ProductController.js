@@ -19,7 +19,7 @@ module.exports = class ProductController extends BaseController {
         categoryId: req.body.categoryId,
         subcategoryId: req.body.subcategoryId,
         occasion: req.body.occasion,
-        productName: req.body.shoesname,
+        productName: req.body.productName,
         description: req.body.description,
         productPhotos: req.files ? req.files.map((el) => el.filename) : [],
         productprice: req.body.productprice,
