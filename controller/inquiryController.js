@@ -16,7 +16,8 @@ module.exports = class UserController extends BaseController {
         title: req.body.title,
         description: req.body.description,
         best_time_to_connect: req.body.best_time_to_connect,
-      };
+        };
+      console.log(req.body);
 
       const inquirydata = new inquirySchema(data);
       const inquiry = await inquirydata.save();
@@ -226,10 +227,11 @@ module.exports = class UserController extends BaseController {
         },
         {
           $addFields: {
-            "startupName": { $arrayElemAt: ["$startupDetails.startupName", 0] } // Extract startup name
+            "startupName": { $arrayElemAt: ["$startupDetails.startupName", 0] } ,
+            "productName": {$arrayElemAt:["$productDetails.productName",0]}, // change 
+
           }
         }
-        // Add more $lookup stages or other aggregation stages as needed
       ]);
 
       return this.sendJSONResponse(
