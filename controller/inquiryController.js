@@ -16,7 +16,7 @@ module.exports = class UserController extends BaseController {
         title: req.body.title,
         description: req.body.description,
         best_time_to_connect: req.body.best_time_to_connect,
-        };
+      };
       console.log(req.body);
 
       const inquirydata = new inquirySchema(data);
@@ -198,7 +198,7 @@ module.exports = class UserController extends BaseController {
       const inquiries = await inquirySchema.aggregate([
         // {
         //   $match: {
-        //     userId: mongoose.Types.ObjectId(userId),
+        //     userId: new mongoose.Types.ObjectId(userId),
         //   },
         // },
         // {
@@ -227,14 +227,14 @@ module.exports = class UserController extends BaseController {
         // },
         // {
         //   $addFields: {
-        //     "startupName": { $arrayElemAt: ["$startupDetails.startupName", 0] } ,
-            
+        //     "startupName": { $arrayElemAt: ["$startupDetails.startupName", 0] },
+
 
         //   }
         // }
         {
           $match: {
-            userId: mongoose.Types.ObjectId(userId),
+            userId: new mongoose.Types.ObjectId(userId),
           },
         },
         {
@@ -250,17 +250,6 @@ module.exports = class UserController extends BaseController {
         },
         {
           $lookup: {
-            from: "users",
-            localField: "userId",
-            foreignField: "_id",
-            as: "userDetails"
-          }
-        },
-        {
-          $unwind: "$userDetails"
-        },
-        {
-          $lookup: {
             from: "startups",
             localField: "productDetails.startupId",
             foreignField: "_id",
@@ -271,12 +260,25 @@ module.exports = class UserController extends BaseController {
           $unwind: "$startupDetails"
         },
         {
+          $lookup: {
+            from: "users",
+            localField: "userId",
+            foreignField: "_id",
+            as: "userDetails"
+          }
+        },
+        {
+          $unwind: "$userDetails"
+        },
+        {
           $addFields: {
             "productName": "$productDetails.productName",
             "startupName": "$startupDetails.startupName"
           }
-        }
+        },
       ]);
+
+      console.log(inquiries)
 
       return this.sendJSONResponse(
         res,
@@ -295,56 +297,56 @@ module.exports = class UserController extends BaseController {
   }
 
 
-  
+
   async updateStatus(req, res) {
     try {
-        let inquiryId = req.query.inquiryId;
-        const tokenData = req.userdata;
-        const userId = tokenData.id;
+      let inquiryId = req.query.inquiryId;
+      const tokenData = req.userdata;
+      const userId = tokenData.id;
 
-        // Check if inquiryId is provided
-        if (!inquiryId) {
-            return res.status(400).json({
-                success: false,
-                message: "Inquiry ID is required"
-            });
-        }
-
-        let data = {
-            status: req.body.status
-        };
-
-        // Find the inquiry based on the inquiryId and userId
-        let inquiry = await inquirySchema.findOne({ _id: inquiryId, userId: userId });
-
-        // Check if the inquiry exists and if the user is authorized to update it
-        if (!inquiry) {
-            return res.status(404).json({
-                success: false,
-                message: "Inquiry not found or you are not authorized to update this inquiry"
-            });
-        }
-
-        // Update the inquiry status
-        let updateData = await inquirySchema.findOneAndUpdate(
-            { _id: inquiryId },
-            data,
-            { new: true }
-        );
-
-        res.status(200).json({
-            success: true,
-            message: "Inquiry status updated successfully",
-            data: updateData
+      // Check if inquiryId is provided
+      if (!inquiryId) {
+        return res.status(400).json({
+          success: false,
+          message: "Inquiry ID is required"
         });
+      }
+
+      let data = {
+        status: req.body.status
+      };
+
+      // Find the inquiry based on the inquiryId and userId
+      let inquiry = await inquirySchema.findOne({ _id: inquiryId, userId: userId });
+
+      // Check if the inquiry exists and if the user is authorized to update it
+      if (!inquiry) {
+        return res.status(404).json({
+          success: false,
+          message: "Inquiry not found or you are not authorized to update this inquiry"
+        });
+      }
+
+      // Update the inquiry status
+      let updateData = await inquirySchema.findOneAndUpdate(
+        { _id: inquiryId },
+        data,
+        { new: true }
+      );
+
+      res.status(200).json({
+        success: true,
+        message: "Inquiry status updated successfully",
+        data: updateData
+      });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({
-            success: false,
-            message: "Internal Server Error"
-        });
+      console.error(error);
+      res.status(500).json({
+        success: false,
+        message: "Internal Server Error"
+      });
     }
-}
+  }
 
 
 
