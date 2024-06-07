@@ -196,6 +196,42 @@ module.exports = class UserController extends BaseController {
       const userId = tokenData.id;
 
       const inquiries = await inquirySchema.aggregate([
+        // {
+        //   $match: {
+        //     userId: mongoose.Types.ObjectId(userId),
+        //   },
+        // },
+        // {
+        //   $lookup: {
+        //     from: "products",
+        //     localField: "productId",
+        //     foreignField: "_id",
+        //     as: "productDetails"
+        //   }
+        // },
+        // {
+        //   $lookup: {
+        //     from: "users",
+        //     localField: "userId",
+        //     foreignField: "_id",
+        //     as: "userDetails"
+        //   }
+        // },
+        // {
+        //   $lookup: {
+        //     from: "startups",
+        //     localField: "productDetails.startupId",
+        //     foreignField: "_id",
+        //     as: "startupDetails"
+        //   }
+        // },
+        // {
+        //   $addFields: {
+        //     "startupName": { $arrayElemAt: ["$startupDetails.startupName", 0] } ,
+            
+
+        //   }
+        // }
         {
           $match: {
             userId: mongoose.Types.ObjectId(userId),
@@ -210,12 +246,18 @@ module.exports = class UserController extends BaseController {
           }
         },
         {
+          $unwind: "$productDetails"
+        },
+        {
           $lookup: {
             from: "users",
             localField: "userId",
             foreignField: "_id",
             as: "userDetails"
           }
+        },
+        {
+          $unwind: "$userDetails"
         },
         {
           $lookup: {
@@ -226,10 +268,12 @@ module.exports = class UserController extends BaseController {
           }
         },
         {
+          $unwind: "$startupDetails"
+        },
+        {
           $addFields: {
-            "startupName": { $arrayElemAt: ["$startupDetails.startupName", 0] } ,
-            "productName": {$arrayElemAt:["$productDetails.productName",0]}, // change 
-
+            "productName": "$productDetails.productName",
+            "startupName": "$startupDetails.startupName"
           }
         }
       ]);
