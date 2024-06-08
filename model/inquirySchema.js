@@ -8,7 +8,7 @@ const inquirySchema = new mongoose.Schema(
     },
     productId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Product",
+      ref: "product",
     },
     startupId: {
       type: mongoose.Schema.Types.ObjectId,

@@ -5,7 +5,6 @@ const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
 
 module.exports = class UserController extends BaseController {
-
   async insert(req, res) {
     try {
       const tokenData = req.userdata;
@@ -270,12 +269,12 @@ module.exports = class UserController extends BaseController {
         {
           $unwind: "$userDetails"
         },
-        {
-          $addFields: {
-            "productName": "$productDetails.productName",
-            "startupName": "$startupDetails.startupName"
-          }
-        },
+        // {
+        //   $addFields: {
+        //     "productname": "$productDetails.productname",
+        //     "startupName": "$startupDetails.startupName"
+        //   }
+        // },
       ]);
 
       console.log(inquiries)
@@ -347,7 +346,4 @@ module.exports = class UserController extends BaseController {
       });
     }
   }
-
-
-
 }
