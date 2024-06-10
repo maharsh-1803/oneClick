@@ -19,7 +19,7 @@ const server = http.createServer(app);
 // const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
-        origin: ["http://localhost:3000", "http://localhost:5173", "https://chat-app-frontend-dwhz.onrender.com", "http://3.108.65.195:4000"],
+        origin: ["http://localhost:3000", "http://localhost:5173", "https://chat-app-frontend-dwhz.onrender.com", "http://3.108.65.195:4000","https://one-click-frontend.onrender.com"],
         methods: ["GET", "POST"],
     },
 });
