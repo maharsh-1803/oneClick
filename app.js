@@ -20,19 +20,21 @@ var inquiry_router = require("./router/InquiriesRouter");
 var award_router = require("./router/AwardRouter");
 var certificate_router = require("./router/CertificateRouter");
 var chat_router = require("./router/chatRouter");
-var app = express();
-var server = http.createServer(app); // Create HTTP server
-var io = socketIo(server); // Integrate Socket.IO with the server
+
+// var app = express();
+
+
 var logger = require("morgan");
 var mongoCon = require("./config/db");
 const chat = require("./model/chatSchema");
 
 // CORS configuration
 const corsOptions = {
-  origin: ['http://localhost:5173', 'http://localhost:3000','https://one-click-frontend.onrender.com'], 
+  origin: ['http://localhost:5173', 'http://localhost:3000', 'https://one-click-frontend.onrender.com'],
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization']
 };
+const { app } = require("./socket/socket")
 
 
 app.use(cors(corsOptions));
@@ -67,29 +69,24 @@ app.use("/api/award", award_router);
 app.use("/api/certificate", certificate_router);
 app.use("/api/chat", chat_router);
 
-io.on('connection', (socket) => {
-  console.log('a user connected');
 
-  socket.on('sendMessage', async (data) => {
-      const chat = new chat({
-          inquiryId: data.inquiryId,
-          message: data.message,
-          senderId: data.senderId,
-          receiverId: data.receiverId,
-      });
 
-      try {
-          const newChat = await chat.save();
-          io.emit('newMessage', newChat);  
-      } catch (error) {
-          console.error('Error saving chat:', error.message);
-      }
-  });
+// const getReceiverSocketId = (receiverId) => {
+// 	return userSocketMap[receiverId];
+// };
+// const userSocketMap = {}; 
 
-  socket.on('disconnect', () => {
-      console.log('user disconnected');
-  });
-});
+// io.on('connection', (socket) => {
+//   console.log('a user connected',socket.id);
+
+//   const userId = socket.handshake.query.userId;
+//   if (userId != "undefined") userSocketMap[userId] = socket.id;
+
+//   socket.on('disconnect', () => {
+//       console.log('user disconnected');
+//       delete userSocketMap[userId];
+//   });
+// });
 
 // Catch 404 and forward to error handler
 app.use(function (req, res, next) {

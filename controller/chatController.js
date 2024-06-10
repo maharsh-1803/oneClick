@@ -1,39 +1,47 @@
 const mongoose = require("mongoose");
 const Chat = require("../model/chatSchema")
+const { getReceiverSocketId, io, userSocketMap } = require("../socket/socket");
+
 
 exports.insertChat = async (req, res) => {
     try {
         const tokenData = req.userdata;
-
         let { inquiryId, message, receiverId, userId, screen } = req.body;
 
+        let chat;
         if (screen === "user") {
-            let data = new Chat({
+            chat = new Chat({
                 inquiryId,
                 senderId: tokenData.id,
                 message,
                 receiverId
             });
-            await data.save()
-            return res.status(200).json({
-                success: true,
-                message: "Chat inserted successfully",
-                data: data
-            });
         } else {
-            let startupData = new Chat({
+            chat = new Chat({
                 inquiryId,
                 message,
                 senderId: receiverId,
                 receiverId: userId
             });
-            await startupData.save()
-            return res.status(200).json({
-                success: true,
-                message: "Chat inserted successfully",
-                data: startupData
-            });
         }
+
+        await chat.save();
+
+        // io.emit('newMessage', chat); 
+
+        if (getReceiverSocketId[receiverId]) {
+            io.to(userSocketMap[receiverId]).emit('newMessage', chat);
+        }
+
+        if (getReceiverSocketId[tokenData.id]) {
+            io.to(userSocketMap[tokenData.id]).emit('newMessage', chat);
+        }
+
+        return res.status(200).json({
+            success: true,
+            message: "Chat inserted successfully",
+            data: chat
+        });
     } catch (error) {
         console.error(error);
         res.status(500).json({
@@ -42,8 +50,6 @@ exports.insertChat = async (req, res) => {
         });
     }
 };
-
-
 
 exports.displayChatByInquiry = async (req, res) => {
     try {

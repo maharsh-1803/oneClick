@@ -7,6 +7,7 @@
 var app = require("../app");
 var debug = require("debug")("keyapolyplast-api:server");
 var http = require("http");
+var { server } = require("../socket/socket")
 
 /**
  * Get port from environment and store in Express.
