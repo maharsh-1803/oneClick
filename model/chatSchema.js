@@ -24,4 +24,5 @@ const chatSchema = new mongoose.Schema({
     updatedAt: { type: Date, default: Date.now }, // Add updatedAt field with default value
 });
 
-module.exports = mongoose.model('chat', chatSchema)
+const chat =  mongoose.model('chat', chatSchema)
+module.exports = chat;
