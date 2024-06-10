@@ -27,7 +27,6 @@ exports.insertChat = async (req, res) => {
 
         await chat.save();
 
-        // io.emit('newMessage', chat); 
         const receiverSocketId = getReceiverSocketId(receiverId)
 
         if (receiverSocketId) {
