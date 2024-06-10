@@ -5,7 +5,7 @@ var chatController = require("../controller/chatController");
 const auth = require("../middleware/auth");
 
 
-router.post("/chat-insert", auth, chatController.insertChat);
+router.post("/chat-insert", chatController.insertChat);
 router.get("/display-chat",chatController.displayChatByInquiry)
 
 
