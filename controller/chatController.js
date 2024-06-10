@@ -33,11 +33,12 @@ exports.insertChat = async (req, res) => {
             io.to(receiverSocketId).emit('newMessage', chat);
         }
 
-        const senderSocketId = getReceiverSocketId(tokenData.id);
+        // const senderSocketId = getReceiverSocketId(tokenData.id);
 
-        if (senderSocketId) {
-            io.to(senderSocketId).emit('newMessage', chat);
-        }
+        // if (senderSocketId) {
+        //     io.to(senderSocketId).emit('newMessage', chat);
+        // }
+        // const receiverSocketId = getReceiverSocketId(receiverId);
 
         return res.status(200).json({
             success: true,
@@ -50,7 +51,7 @@ exports.insertChat = async (req, res) => {
         //     success: false,
         //     message: "Internal Server Error"
         // });
-        return res.status(400).send({error:error.message});
+        return res.status(400).send({ error: error.message });
     }
 };
 
