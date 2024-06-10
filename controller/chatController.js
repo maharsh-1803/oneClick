@@ -47,10 +47,11 @@ exports.insertChat = async (req, res) => {
         });
     } catch (error) {
         console.error(error);
-        res.status(500).json({
-            success: false,
-            message: "Internal Server Error"
-        });
+        // res.status(500).json({
+        //     success: false,
+        //     message: "Internal Server Error"
+        // });
+        return res.status(400).send({error:error.message});
     }
 };
 
