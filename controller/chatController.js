@@ -28,13 +28,16 @@ exports.insertChat = async (req, res) => {
         await chat.save();
 
         // io.emit('newMessage', chat); 
+        const receiverSocketId = getReceiverSocketId(receiverId)
 
-        if (getReceiverSocketId[receiverId]) {
-            io.to(userSocketMap[receiverId]).emit('newMessage', chat);
+        if (receiverSocketId) {
+            io.to(receiverSocketId).emit('newMessage', chat);
         }
 
-        if (getReceiverSocketId[tokenData.id]) {
-            io.to(userSocketMap[tokenData.id]).emit('newMessage', chat);
+        const senderSocketId = getReceiverSocketId(tokenData.id);
+
+        if (senderSocketId) {
+            io.to(senderSocketId).emit('newMessage', chat);
         }
 
         return res.status(200).json({
