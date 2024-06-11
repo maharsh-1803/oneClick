@@ -38,7 +38,6 @@ exports.insertChat = async (req, res) => {
         // if (senderSocketId) {
         //     io.to(senderSocketId).emit('newMessage', chat);
         // }
-        // const receiverSocketId = getReceiverSocketId(receiverId);
 
         return res.status(200).json({
             success: true,

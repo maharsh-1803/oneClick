@@ -1,11 +1,11 @@
+// main file (e.g., app.js)
+
 var createError = require("http-errors");
 var express = require("express");
 var path = require("path");
 var logger = require("morgan");
 var bodyParser = require("body-parser");
-var cors = require('cors');
-var http = require('http'); // Required for creating HTTP server
-var socketIo = require('socket.io'); // Socket.IO
+// var cors = require('cors');
 
 var admin_router = require("./router/AdminRouter");
 var user_router = require("./router/UserRouter");
@@ -21,23 +21,17 @@ var award_router = require("./router/AwardRouter");
 var certificate_router = require("./router/CertificateRouter");
 var chat_router = require("./router/chatRouter");
 
-// var app = express();
-
-
-var logger = require("morgan");
 var mongoCon = require("./config/db");
-const chat = require("./model/chatSchema");
+const { app, server } = require("./socket/socket");
 
 // CORS configuration
-const corsOptions = {
-  origin: ['http://localhost:5173', 'http://localhost:3000', 'https://one-click-frontend.onrender.com'],
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-};
-const { app } = require("./socket/socket")
+// const corsOptions = {
+//   origin: ['http://localhost:5173', 'http://localhost:3000', 'https://one-click-frontend.onrender.com'],
+//   methods: ['GET', 'POST', 'PUT', 'DELETE'],
+//   allowedHeaders: ['Content-Type', 'Authorization']
+// };
 
-
-app.use(cors(corsOptions));
+// app.use(cors(corsOptions));
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
@@ -68,25 +62,6 @@ app.use("/api/inquiry", inquiry_router);
 app.use("/api/award", award_router);
 app.use("/api/certificate", certificate_router);
 app.use("/api/chat", chat_router);
-
-
-
-// const getReceiverSocketId = (receiverId) => {
-// 	return userSocketMap[receiverId];
-// };
-// const userSocketMap = {}; 
-
-// io.on('connection', (socket) => {
-//   console.log('a user connected',socket.id);
-
-//   const userId = socket.handshake.query.userId;
-//   if (userId != "undefined") userSocketMap[userId] = socket.id;
-
-//   socket.on('disconnect', () => {
-//       console.log('user disconnected');
-//       delete userSocketMap[userId];
-//   });
-// });
 
 // Catch 404 and forward to error handler
 app.use(function (req, res, next) {
