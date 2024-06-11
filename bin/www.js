@@ -6,7 +6,7 @@
 
 var app = require("../app");
 var debug = require("debug")("keyapolyplast-api:server");
-var http = require("http");
+// var http = require("http");
 var { server } = require("../socket/socket")
 
 /**
@@ -20,7 +20,7 @@ app.set("port", port);
  * Create HTTP server.
  */
 
-var server = http.createServer(app);
+// var server = http.createServer(app);
 
 /**
  * Listen on provided port, on all network interfaces.
