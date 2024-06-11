@@ -22,7 +22,7 @@ var certificate_router = require("./router/CertificateRouter");
 var chat_router = require("./router/chatRouter");
 
 var mongoCon = require("./config/db");
-const { app, server } = require("./socket/socket");
+const { app } = require("./socket/socket");
 
 // CORS configuration
 // const corsOptions = {
