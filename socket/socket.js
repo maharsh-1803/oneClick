@@ -12,7 +12,7 @@ const io = new Server(server, {
         methods: ["GET", "POST"],
     },
 });
-app.use(cors());
+// app.use(cors());
 
 
 
