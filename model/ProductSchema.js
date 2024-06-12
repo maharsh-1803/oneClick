@@ -17,10 +17,6 @@ const productschema = new mongoose.Schema(
       ref: "subcategory",
       required: true,
     },
-    occasion: {
-      type: String,
-      // required: true,
-    },
     productName: {
       type: String,
       required: true,
@@ -36,34 +32,6 @@ const productschema = new mongoose.Schema(
     productprice: {
       type: String,
       required: true,
-    },
-    productcolor: {
-      type: String,
-      // required: true,
-    },
-    productmodel: {
-      type: String,
-      // required: true,
-    },
-    manufacturerdetail: {
-      type: String,
-      // required: true,
-    },
-    productweight: {
-      type: String,
-      // required: true,
-    },
-    productbrand: {
-      type: String,
-      // required: true,
-    },
-    productsize: {
-      type: String,
-      // required: true,
-    },
-    producttype: {
-      type: String,
-      // required: true,
     },
     productstatus: {
       type: String,

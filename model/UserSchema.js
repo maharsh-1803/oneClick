@@ -77,6 +77,10 @@ const userSchema = new mongoose.Schema(
       enum: ["active", "deactive", "block", "pending"],
       default: "active",
     },
+    DOB:{
+      type:Date,
+      require:true
+    }
   },
   { timestamps: true }
 );
