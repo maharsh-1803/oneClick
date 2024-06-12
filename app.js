@@ -20,6 +20,7 @@ var inquiry_router = require("./router/InquiriesRouter");
 var award_router = require("./router/AwardRouter");
 var certificate_router = require("./router/CertificateRouter");
 var chat_router = require("./router/chatRouter");
+var Education_router = require('./router/EducationRouter')
 
 var mongoCon = require("./config/db");
 const { app } = require("./socket/socket");
@@ -62,6 +63,7 @@ app.use("/api/inquiry", inquiry_router);
 app.use("/api/award", award_router);
 app.use("/api/certificate", certificate_router);
 app.use("/api/chat", chat_router);
+app.use('/api/Education',Education_router);
 
 // Catch 404 and forward to error handler
 app.use(function (req, res, next) {

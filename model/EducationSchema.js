@@ -7,11 +7,11 @@ const EducationSchema = mongoose.Schema({
     },
     college_university_name:{
         type:String,
-        require:ture
+        require:true
     },
     passing_year:{
-        type:String,
-        require:ture
+        type:Number,
+        require:true
     },
     highest_Education:{
         type:String,
@@ -22,4 +22,4 @@ const EducationSchema = mongoose.Schema({
 
 const Education = mongoose.model('Education',EducationSchema);
 
-module.exports=Education;
+module.exports = Education;

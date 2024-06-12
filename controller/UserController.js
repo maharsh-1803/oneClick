@@ -3,6 +3,7 @@ const NotFound = require("../errors/NotFound");
 const UserSchema = require("../model/UserSchema");
 const jwt = require("jsonwebtoken");
 const fs = require("fs");
+const mongoose = require('mongoose')
 
 module.exports = class UserController extends BaseController {
   async postuser(req, res) {
@@ -93,43 +94,91 @@ module.exports = class UserController extends BaseController {
 
  
 
+  // async user_display(req, res) {
+  //   try {
+  //     const tokenData = req.userdata;
+
+  //     const user = await UserSchema.find({ _id: tokenData.id });
+
+  //     if (user.length === 0) {
+  //       throw new Forbidden("You are not a user");
+  //     }
+
+  //     const user_data = await UserSchema.find({ _id: tokenData.id });
+  //     // Define your base URL here
+  //     const baseURL = "https://one-click-backend-mfrv.onrender.com/user"; // Replace "http://example.com" with your actual base URL
+
+  //     // Assuming profileImage contains only filename
+  //     const userDataWithProfileImageURL = user_data.map(user => {
+  //       return {
+  //         ...user._doc,
+  //         profileImageURL: baseURL + "/" + user.profilePicture
+  //       };
+  //     });
+
+  //     return this.sendJSONResponse(
+  //       res,
+  //       "User data",
+  //       {
+  //         length: userDataWithProfileImageURL.length,
+  //       },
+  //       userDataWithProfileImageURL
+  //     );
+  //   } catch (error) {
+  //     if (error instanceof NotFound) {
+  //       throw error;
+  //     }
+  //     return this.sendErrorResponse(req, res, error);
+  //   }
+  // }
   async user_display(req, res) {
     try {
-      const tokenData = req.userdata;
+        const tokenData = req.userdata;
+        const userId = tokenData.id;
 
-      const user = await UserSchema.find({ _id: tokenData.id });
+        // Define your base URL here
+        const baseURL = "https://one-click-backend-mfrv.onrender.com/user";
 
-      if (user.length === 0) {
-        throw new Forbidden("You are not a user");
-      }
+        // Perform aggregation to get user details along with education details
+        const user_data = await UserSchema.aggregate([
+            { $match: { _id: mongoose.Types.ObjectId(userId) } },
+            {
+                $lookup: {
+                    from: 'educations',
+                    localField: '_id',
+                    foreignField: 'userId',
+                    as: 'educationDetails'
+                }
+            }
+        ]);
 
-      const user_data = await UserSchema.find({ _id: tokenData.id });
-      // Define your base URL here
-      const baseURL = "https://one-click-backend-mfrv.onrender.com/user"; // Replace "http://example.com" with your actual base URL
+        if (user_data.length === 0) {
+            throw new Forbidden("You are not a user");
+        }
 
-      // Assuming profileImage contains only filename
-      const userDataWithProfileImageURL = user_data.map(user => {
-        return {
-          ...user._doc,
-          profileImageURL: baseURL + "/" + user.profilePicture
-        };
-      });
+        // Assuming profileImage contains only filename
+        const userDataWithProfileImageURL = user_data.map(user => {
+            return {
+                ...user,
+                profileImageURL: baseURL + "/" + user.profilePicture
+            };
+        });
 
-      return this.sendJSONResponse(
-        res,
-        "User data",
-        {
-          length: userDataWithProfileImageURL.length,
-        },
-        userDataWithProfileImageURL
-      );
+        return this.sendJSONResponse(
+            res,
+            "User data",
+            {
+                length: userDataWithProfileImageURL.length,
+            },
+            userDataWithProfileImageURL
+        );
     } catch (error) {
-      if (error instanceof NotFound) {
-        throw error;
-      }
-      return this.sendErrorResponse(req, res, error);
+        if (error instanceof NotFound) {
+            throw error;
+        }
+        return this.sendErrorResponse(req, res, error);
     }
-  }
+}
 
 
 
