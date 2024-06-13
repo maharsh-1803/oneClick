@@ -18,21 +18,11 @@ module.exports = class ProductController extends BaseController {
         startupId: req.body.startupId,
         categoryId: req.body.categoryId,
         subcategoryId: req.body.subcategoryId,
-        occasion: req.body.occasion,
         productName: req.body.productName,
         description: req.body.description,
         productPhotos: req.files ? req.files.map((el) => el.filename) : [],
         productprice: req.body.productprice,
-        productcolor: req.body.productcolor,
         productstatus: req.body.productstatus,
-
-        //detailSpecification
-        productmodel: req.body.productmodel,
-        manufacturerdetail: req.body.manufacturerdetail,
-        productweight: req.body.productweight,
-        productbrand: req.body.productbrand,
-        productsize: req.body.productsize,
-        producttype: req.body.producttype,
       };
 
       var productData = new ProductSchema(data);
@@ -91,20 +81,12 @@ module.exports = class ProductController extends BaseController {
             startupId: req.body.startupId,
             categoryId: req.body.categoryId,
             subcategoryId: req.body.subcategoryId,
-            occasion: req.body.occasion,
             productName: req.body.productName,
             description: req.body.description,
             productPhotos: req.files ? req.files.map((el) => el.filename) : [],
             productprice: req.body.productprice,
-            productcolor: req.body.productcolor,
             productstatus: req.body.productstatus,
 
-            productmodel: req.body.productmodel,
-            manufacturerdetail: req.body.manufacturerdetail,
-            productweight: req.body.productweight,
-            productbrand: req.body.productbrand,
-            productsize: req.body.productsize,
-            producttype: req.body.producttype,
           },
         }
       );
@@ -246,12 +228,10 @@ module.exports = class ProductController extends BaseController {
         {
           $project: {
             _id: 1,
-            occasion: 1,
             productName: 1,
             description: 1,
             productPhotos: 1, // Make sure this field is projected correctly
             productprice: 1,
-            productcolor: 1,
             productstatus: 1,
             createdAt: 1,
             updatedAt: 1,
