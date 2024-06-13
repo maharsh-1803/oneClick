@@ -4,6 +4,7 @@ const UserSchema = require("../model/UserSchema");
 const jwt = require("jsonwebtoken");
 const fs = require("fs");
 const mongoose = require('mongoose')
+const path = require('path')
 
 module.exports = class UserController extends BaseController {
   async postuser(req, res) {
@@ -16,14 +17,16 @@ module.exports = class UserController extends BaseController {
         })
       } else {
         const data = {
-          name: req.body.userName,
+          name: req.body.name,
           contact: req.body.contact,
           email: req.body.email,
           password: req.body.password,
           address: req.body.address,
           city: req.body.city,
           state: req.body.state,
+          profilePicture: req.file ? req.file.path : null,
           pincode: req.body.pincode,
+          DOB:req.body.DOB
         };
 
         const userdata = new UserSchema(data);
@@ -206,6 +209,7 @@ module.exports = class UserController extends BaseController {
         state: req.body.state,
         pincode: req.body.pincode,
         profilePicture: req.file ? req.file.filename : "",
+        DOB:req.body.DOB
       };
 
       const updatedUser = await UserSchema.updateOne(
@@ -221,6 +225,7 @@ module.exports = class UserController extends BaseController {
             state: newValues.state,
             pincode: newValues.pincode,
             profilePicture: newValues.profilePicture,
+            DOB:newValues.DOB
           },
         }
       );

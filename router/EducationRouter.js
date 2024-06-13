@@ -4,6 +4,6 @@ const router = express.Router();
 const auth = require('../middleware/auth')
 
 router.post("/addEducation", auth, EducationController.EducationAdd)
-router.patch('/EditEducation',auth,EducationController.EducationEdit)
+router.put('/EditEducation',auth,EducationController.EducationEdit)
 
 module.exports = router;

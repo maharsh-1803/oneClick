@@ -21,5 +21,7 @@ const upload = multer({
 });
 
 router.post('/AddPartner', auth, upload.single('file'), PartnerController.AddPartner);
+router.put('/EditPartner/:id',upload.single('file'),auth,PartnerController.EditPartner)
+router.delete('/DeletePartner/:id',auth,PartnerController.DeletePartner)
 
 module.exports = router;
