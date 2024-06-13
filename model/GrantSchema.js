@@ -25,7 +25,7 @@ const GrantSchema = new mongoose.Schema({
     other_details:{
         type:String
     }
-})
+},{timestamps:true})
 
 const Grant = mongoose.model('Grant',GrantSchema);
 

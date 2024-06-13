@@ -21,7 +21,7 @@ const InvestmentSchema = new mongoose.Schema({
         type:String
     }
 
-})
+},{timestamps:true})
 
 const Investment = mongoose.model('Investment',InvestmentSchema);
 

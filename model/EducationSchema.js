@@ -18,7 +18,7 @@ const EducationSchema = mongoose.Schema({
         require:true
     }
 
-});
+},{timestamps:true});
 
 const Education = mongoose.model('Education',EducationSchema);
 

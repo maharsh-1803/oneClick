@@ -18,14 +18,14 @@ exports.EducationAdd = async (req, res) => {
         })
 
         const education = await newEducation.save();
-        res.status(200).json({
+        return res.status(200).json({
             success: true,
             message: "education add successfully",
             data: education
         })
     } catch (error) {
         console.error(error);
-        res.status(500).json({
+        return res.status(500).json({
             success: false,
             message: "Internal Server Error"
         })
@@ -37,19 +37,11 @@ exports.EducationEdit = async(req,res)=>{
         const tokenData = req.userdata;  
         const { college_university_name, passing_year, highest_Education } = req.body;
 
-        // Find the user by ID from the token data
-        const user = await User.findById(tokenData.id);
-        if (!user) {
-            return res.status(404).json({ message: "User not found" });
-        }
-
-        // Find the education record by user ID
-        const education = await Education.findOne({ userId: user._id });
+        const education = await Education.findOne({ userId: tokenData.id });
         if (!education) {
             return res.status(404).json({ message: "Education record not found" });
         }
 
-        // Update only the provided fields
         if (college_university_name !== undefined) {
             education.college_university_name = college_university_name;
         }

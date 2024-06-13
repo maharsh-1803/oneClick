@@ -13,7 +13,7 @@ const DocumentSchema = new mongoose.Schema({
         type:String,
         require:true
     }
-})
+},{timestamps:true})
 
 const Document = mongoose.model('Document',DocumentSchema);
 

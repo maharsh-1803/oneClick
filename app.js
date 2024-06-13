@@ -21,6 +21,7 @@ var award_router = require("./router/AwardRouter");
 var certificate_router = require("./router/CertificateRouter");
 var chat_router = require("./router/chatRouter");
 var Education_router = require('./router/EducationRouter')
+var Partner_router = require('./router/PartnerRouter')
 
 var mongoCon = require("./config/db");
 const { app } = require("./socket/socket");
@@ -42,6 +43,7 @@ app.set("view engine", "ejs");
 app.use("/", express.static("./storage/images/startup"));
 app.use("/user", express.static("./storage/images/profile"));
 app.use("/product", express.static("./storage/images/product"));
+app.use("/partner", express.static("./storage/images/partner"));
 
 app.use(logger("dev"));
 app.use(express.json());
@@ -64,6 +66,7 @@ app.use("/api/award", award_router);
 app.use("/api/certificate", certificate_router);
 app.use("/api/chat", chat_router);
 app.use('/api/Education',Education_router);
+app.use('/api/Partner',Partner_router)
 
 // Catch 404 and forward to error handler
 app.use(function (req, res, next) {
