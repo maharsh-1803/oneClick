@@ -136,10 +136,10 @@ module.exports = class UserController extends BaseController {
         const tokenData = req.userdata;
         const userId = tokenData.id;
 
-        // Define your base URL here
+        
         const baseURL = "https://one-click-backend-mfrv.onrender.com/user";
 
-        // Perform aggregation to get user details along with education details
+        
         const user_data = await UserSchema.aggregate([
             { $match: { _id: mongoose.Types.ObjectId(userId) } },
             {
@@ -156,7 +156,7 @@ module.exports = class UserController extends BaseController {
             throw new Forbidden("You are not a user");
         }
 
-        // Assuming profileImage contains only filename
+        
         const userDataWithProfileImageURL = user_data.map(user => {
             return {
                 ...user,
