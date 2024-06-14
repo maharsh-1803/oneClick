@@ -150,6 +150,11 @@ module.exports = class UserController extends BaseController {
                     foreignField: 'userId',
                     as: 'educationDetails'
                 }
+            },
+            {
+              $project:{
+                password:0
+              }
             }
         ]);
 
