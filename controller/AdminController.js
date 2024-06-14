@@ -171,7 +171,7 @@ module.exports = class AdminController extends BaseController {
                 });
             }
 
-            let allUserData = await UserSchema.find()
+            let allUserData = await UserSchema.find().select('-password')
             if (allUserData) {
                 res.status(200).json({
                     success: true,
@@ -206,7 +206,7 @@ module.exports = class AdminController extends BaseController {
                 });
             }
 
-            let userData = await UserSchema.findById(user_id);
+            let userData = await UserSchema.findById(user_id).select('-password');
 
             if (!userData) {
                 return res.status(400).json({
@@ -361,7 +361,7 @@ module.exports = class AdminController extends BaseController {
                 });
             }
 
-            const baseURL = 'https://one-click-backend-1.onrender.com/product'; // Replace 'https://your-base-url.com' with your actual base URL
+            const baseURL = 'https://oneclick-sfu6.onrender.com/product'; // Replace 'https://your-base-url.com' with your actual base URL
             if (productData.productPhotos) {
                 productData.productPhotos = productData.productPhotos.map(photo => `${baseURL}/${photo}`);
             }

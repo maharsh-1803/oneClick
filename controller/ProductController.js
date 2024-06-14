@@ -161,111 +161,119 @@ module.exports = class ProductController extends BaseController {
       const product = await ProductSchema.aggregate([
         { $match: { _id: mongoose.Types.ObjectId(product_id) } },
         {
-          $lookup: {
-            from: "reviews",
-            localField: "_id",
-            foreignField: "productId",
-            as: "reviews",
-          },
-        },
-        {
-          $lookup: {
-            from: "startups",
-            localField: "startupId",
-            foreignField: "_id",
-            as: "startup",
-          },
-        },
-        {
-          $unwind: {
-            path: "$startup",
-            preserveNullAndEmptyArrays: true,
-          },
-        },
-        {
-          $lookup: {
-            from: "categories",
-            localField: "startup.categoryId",
-            foreignField: "_id",
-            as: "category",
-          },
-        },
-        {
-          $lookup: {
-            from: "subcategories",
-            localField: "startup.subcategoryId",
-            foreignField: "_id",
-            as: "subcategory",
-          },
-        },
-        {
-          $lookup: {
-            from: "inqubationcenters",
-            localField: "startup.inqubationCenterId",
-            foreignField: "_id",
-            as: "incubationCenter",
-          },
-        },
-        {
-          $lookup: {
-            from: "products",
-            let: { startupId: "$startupId" },
-            pipeline: [
-              {
-                $match: {
-                  $expr: {
-                    $and: [
-                      { $eq: ["$$startupId", "$startupId"] },
-                      { $ne: ["$_id", mongoose.Types.ObjectId(product_id)] },
-                    ],
-                  },
-                },
-              },
-            ],
-            as: "otherProducts",
-          },
-        },
-        {
-          $project: {
-            _id: 1,
-            productName: 1,
-            description: 1,
-            productPhotos: 1, // Make sure this field is projected correctly
-            productprice: 1,
-            productstatus: 1,
-            createdAt: 1,
-            updatedAt: 1,
-            reviews: 1,
-            startup: {
-              _id: 1,
-              userId: 1,
-              startupName: 1,
-              address: 1,
-              contactNumber: 1,
-              contactPerson: 1,
-              email: 1,
-              city: 1,
-              state: 1,
-              country: 1,
-              inqubationCenterId: 1,
-              inqubationCenterCity: 1,
-              categoryId: 1,
-              subcategoryId: 1,
-              startupLogo: 1,
-              yearOfEstablished: 1,
-              registeredAs: 1,
-              pincode: 1,
-              createdAt: 1,
-              updatedAt: 1,
-              categoryName: { $arrayElemAt: ["$category.name", 0] },
-              subcategoryName: { $arrayElemAt: ["$subcategory.name", 0] },
-              incubationCenterName: { $arrayElemAt: ["$incubationCenter.IcName", 0] },
+            $lookup: {
+                from: "reviews",
+                localField: "_id",
+                foreignField: "productId",
+                as: "reviews",
             },
-            otherProducts: 1
-          }
+        },
+        {
+            $lookup: {
+                from: "startups",
+                localField: "startupId",
+                foreignField: "_id",
+                as: "startup",
+            },
+        },
+        {
+            $unwind: {
+                path: "$startup",
+                preserveNullAndEmptyArrays: true,
+            },
+        },
+        {
+            $lookup: {
+                from: "categories",
+                localField: "startup.categoryId",
+                foreignField: "_id",
+                as: "category",
+            },
+        },
+        {
+            $lookup: {
+                from: "subcategories",
+                localField: "startup.subcategoryId",
+                foreignField: "_id",
+                as: "subcategory",
+            },
+        },
+        {
+            $lookup: {
+                from: "inqubationcenters",
+                localField: "startup.inqubationCenterId",
+                foreignField: "_id",
+                as: "incubationCenter",
+            },
+        },
+        {
+            $lookup: {
+                from: "products",
+                let: { startupId: "$startupId" },
+                pipeline: [
+                    {
+                        $match: {
+                            $expr: {
+                                $and: [
+                                    { $eq: ["$$startupId", "$startupId"] },
+                                    { $ne: ["$_id", mongoose.Types.ObjectId(product_id)] },
+                                ],
+                            },
+                        },
+                    },
+                ],
+                as: "otherProducts",
+            },
+        },
+        {
+            $lookup: {
+                from: "partners", 
+                localField: "startup._id",
+                foreignField: "startupId",
+                as: "partners",
+            },
+        },
+        {
+            $project: {
+                _id: 1,
+                productName: 1,
+                description: 1,
+                productPhotos: 1, // Make sure this field is projected correctly
+                productprice: 1,
+                productstatus: 1,
+                createdAt: 1,
+                updatedAt: 1,
+                reviews: 1,
+                startup: {
+                    _id: 1,
+                    userId: 1,
+                    startupName: 1,
+                    address: 1,
+                    contactNumber: 1,
+                    contactPerson: 1,
+                    email: 1,
+                    city: 1,
+                    state: 1,
+                    country: 1,
+                    inqubationCenterId: 1,
+                    inqubationCenterCity: 1,
+                    categoryId: 1,
+                    subcategoryId: 1,
+                    startupLogo: 1,
+                    yearOfEstablished: 1,
+                    registeredAs: 1,
+                    pincode: 1,
+                    createdAt: 1,
+                    updatedAt: 1,
+                    categoryName: { $arrayElemAt: ["$category.name", 0] },
+                    subcategoryName: { $arrayElemAt: ["$subcategory.name", 0] },
+                    incubationCenterName: { $arrayElemAt: ["$incubationCenter.IcName", 0] },
+                },
+                partners: 1, 
+                otherProducts: 1
+            }
         }
-        
-      ]);
+    ]);
 
       if (!product || product.length === 0) {
         return res.status(400).json({
@@ -273,7 +281,7 @@ module.exports = class ProductController extends BaseController {
         });
       }
 
-      const baseURL = 'https://one-click-backend-1.onrender.com/product'; // Replace 'https://your-base-url.com' with your actual base URL
+      const baseURL = 'https://oneclick-sfu6.onrender.com/product'; // Replace 'https://your-base-url.com' with your actual base URL
       product.forEach(product => {
           if (product.productPhotos) {
               product.productPhotos = product.productPhotos.map(photo => `${baseURL}/${photo}`);

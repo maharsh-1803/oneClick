@@ -10,6 +10,13 @@ exports.EducationAdd = async (req, res) => {
             return res.status(400).json({ error: 'All fields are required' });
         }
 
+        const educationCheck = await Education.findOne({userId:tokenData.id});
+        if(educationCheck)
+        {
+            return res.status(400).send({message:"Education already exists , you can only edit you education detail"})
+        }
+        
+
         const newEducation = new Education({
             userId: tokenData.id,
             college_university_name,
