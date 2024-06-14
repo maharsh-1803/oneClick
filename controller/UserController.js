@@ -140,7 +140,7 @@ module.exports = class UserController extends BaseController {
         const userId = tokenData.id;
 
         
-        const baseURL = "https://one-click-backend-mfrv.onrender.com/user";
+        const baseURL = "https://oneclick-sfu6.onrender.com/user";
 
         
         const user_data = await UserSchema.aggregate([
