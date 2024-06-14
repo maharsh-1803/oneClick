@@ -63,3 +63,19 @@ exports.EducationEdit = async(req,res)=>{
         res.status(500).json({ message: "Internal server error" });
     }
 };
+
+exports.getEducation = async(req,res)=>{
+    try {
+        const tokenData = req.userdata;
+        const education = await Education.findOne({userId:tokenData.id});
+
+        if(!education)
+        {
+            return res.status(400).send({message:"Education details is not there with this userid"});
+        }
+
+        return res.status(200).send(education)
+    } catch (error) {
+        return res.status(500).send({error:error.message});
+    }
+}

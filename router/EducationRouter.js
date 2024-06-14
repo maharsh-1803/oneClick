@@ -5,5 +5,6 @@ const auth = require('../middleware/auth')
 
 // router.post("/addEducation", auth, EducationController.EducationAdd)
 router.put('/EditEducation',auth,EducationController.EducationEdit)
+router.get('/getEducation',auth,EducationController.getEducation)
 
 module.exports = router;
