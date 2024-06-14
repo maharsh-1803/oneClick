@@ -139,10 +139,8 @@ module.exports = class UserController extends BaseController {
         const tokenData = req.userdata;
         const userId = tokenData.id;
 
-        
         const baseURL = "https://oneclick-sfu6.onrender.com/user";
 
-        
         const user_data = await UserSchema.aggregate([
             { $match: { _id: mongoose.Types.ObjectId(userId) } },
             {
@@ -159,13 +157,10 @@ module.exports = class UserController extends BaseController {
             throw new Forbidden("You are not a user");
         }
 
-        
-        const userDataWithProfileImageURL = user_data.map(user => {
-            return {
-                ...user,
-                profileImageURL: baseURL + "/" + user.profilePicture
-            };
-        });
+        const userDataWithProfileImageURL = user_data.map(user => ({
+            ...user,
+            profilePicture: baseURL + "/" + user.profilePicture
+        }));
 
         return this.sendJSONResponse(
             res,
@@ -182,6 +177,7 @@ module.exports = class UserController extends BaseController {
         return this.sendErrorResponse(req, res, error);
     }
 }
+
 
 
 
