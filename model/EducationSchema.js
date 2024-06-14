@@ -7,15 +7,12 @@ const EducationSchema = mongoose.Schema({
     },
     college_university_name:{
         type:String,
-        require:true
     },
     passing_year:{
         type:Number,
-        require:true
     },
     highest_Education:{
         type:String,
-        require:true
     }
 
 },{timestamps:true});

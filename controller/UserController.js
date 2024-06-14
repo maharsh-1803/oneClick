@@ -4,7 +4,8 @@ const UserSchema = require("../model/UserSchema");
 const jwt = require("jsonwebtoken");
 const fs = require("fs");
 const mongoose = require('mongoose')
-const path = require('path')
+const path = require('path');
+const education = require("../model/EducationSchema");
 
 module.exports = class UserController extends BaseController {
   async postuser(req, res) {
@@ -28,9 +29,18 @@ module.exports = class UserController extends BaseController {
           pincode: req.body.pincode,
           DOB:req.body.DOB
         };
-
         const userdata = new UserSchema(data);
         const user = await userdata.save();
+
+        const EducationData = {
+          userId:user._id,
+          college_university_name:null,
+          passing_year:null,
+          highest_Education:null
+        }
+
+        const Education = new education(EducationData);
+        await Education.save()
 
         return this.sendJSONResponse(
           res,
