@@ -13,7 +13,7 @@ exports.EducationAdd = async (req, res) => {
         const educationCheck = await Education.findOne({userId:tokenData.id});
         if(educationCheck)
         {
-            return res.status(400).send({message:"Education already exists , you can only edit you education detail"})
+            return res.status(500).send({message:"Education already exists , you can only edit you education detail"})
         }
         
 
