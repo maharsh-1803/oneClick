@@ -77,3 +77,17 @@ exports.DeletePartner = async(req,res)=>{
         return res.status(500).send({error:error.message})
     }
 }
+
+exports.getPartner = async(req,res)=>{
+    const {id} = req.params;
+    try {
+        const partners = await Partner.findById(id);
+        if(!partners)
+        {
+            return res.status(400).send({message:"There no any within this startup"});
+        }
+        return res.status(200).send(partners);
+    } catch (error) {
+        return res.status(500).send({error:error.message});
+    }
+}
