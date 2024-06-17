@@ -80,23 +80,22 @@ exports.DeletePartner = async (req, res) => {
 exports.getPartner = async (req, res) => {
     const { id } = req.params;
     const baseURL = "https://oneclick-sfu6.onrender.com/partner"; 
-
+    
     try {
-        const partners = await Partner.find({ startupId: id });
-
-        if (!partners.length) {
+        const partners = await Partner.findOne({ startupId: id });
+        
+        if (!partners) {
             return res.status(404).send({ message: "There are no partners within this startup" });
         }
 
         
-        const partnersWithProfileImageURL = partners.map(partner => ({
-            ...partner.toObject(), 
-            partner_photo: baseURL + "/" + partner.partner_photo
-        }));
+        const partnersWithProfileImageURL = {
+            ...partners.toObject(), 
+            partner_photo: baseURL + "/" + partners.partner_photo
+        };
 
         return res.status(200).send(partnersWithProfileImageURL);
     } catch (error) {
         return res.status(500).send({ error: error.message });
     }
-};
-
+}
