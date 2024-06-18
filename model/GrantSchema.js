@@ -11,7 +11,7 @@ const GrantSchema = new mongoose.Schema({
         require:true
     },
     grant_amount:{
-        type:String,
+        type:Number,
         require:true
     },
     date_when_available:{

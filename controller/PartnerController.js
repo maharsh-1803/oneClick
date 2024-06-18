@@ -122,7 +122,10 @@ exports.getPartner = async (req, res) => {
             partner_photo: baseURL + "/" + partners.partner_photo
         };
 
-        return res.status(200).send(partnersWithProfileImageURL);
+        return res.status(200).json({
+            message:"partner get successfully",
+            data:partnersWithProfileImageURL
+        });
     } catch (error) {
         return res.status(500).send({ error: error.message });
     }

@@ -23,6 +23,7 @@ var chat_router = require("./router/chatRouter");
 var Education_router = require('./router/EducationRouter')
 var Partner_router = require('./router/PartnerRouter')
 var document_router = require('./router/DocumentRouter');
+var grant_router = require('./router/GrantRouter')
 
 var mongoCon = require("./config/db");
 const { app } = require("./socket/socket");
@@ -69,6 +70,7 @@ app.use("/api/chat", chat_router);
 app.use('/api/Education',Education_router);
 app.use('/api/Partner',Partner_router)
 app.use('/api/Document',document_router);
+app.use('/api/Grant',grant_router);
 
 // Catch 404 and forward to error handler
 app.use(function (req, res, next) {
