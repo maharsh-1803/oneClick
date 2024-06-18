@@ -26,10 +26,17 @@ exports.EditInvestment = async(req,res)=>{
     const {id} = req.params;
     const {investment_amount,investor_name,date_when_available,other_details} = req.body;
 
+    const investment = await Investment.findById(id);
+    if(!investment){
+        return res.status(400).send({message:"investment not found with this id"})
+    }
+
     const updateInvestment = {
         investment_amount,
         investor_name,
         date_when_available,
         other_details
     }
+
+    const 
 }

@@ -30,11 +30,11 @@ exports.AddDocument = async(req,res)=>{
 
 exports.EditDocument = async(req,res)=>{
     try {
-        const {id} = req.params;
+        const tokenData = req.userdata;  
         const {document_type} = req.body;
         const file = req.file;
 
-        const document = await Document.findById(id);
+        const document = await Document.findOne({userId:tokenData.id});
         if(!document)
         {
             return res.status(400).send({message:"document is not there with this id"})
@@ -52,7 +52,7 @@ exports.EditDocument = async(req,res)=>{
         let updatedDocument = await Document.findByIdAndUpdate(id,updateDocument,{new:true})
 
         return res.status(200).send(updatedDocument);
-        
+
     } catch (error) {
         return res.status(500).send({error:error.message})
     }
