@@ -46,7 +46,7 @@ module.exports = class UserController extends BaseController {
         const documentData={
           userId:user._id,
           docutment_type:null,
-          document_photo:null
+          document_photo:null,
         }
 
         const document = new Document(documentData);
