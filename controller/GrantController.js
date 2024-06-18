@@ -57,13 +57,16 @@ exports.getGrant = async (req, res) => {
     try {
         const { id } = req.params;
 
-        const grant = await Grant.findOne({ startupId: id });
+        const grant = await Grant.find({ startupId: id });
 
         if (!grant) {
             return res.status(400).send({ message: "no any grant available with this startup" })
         }
 
-        return res.status(200).send(grant);
+        return res.status(200).json({
+            message:"grant retrive successfully",
+            grants:grant
+        });
 
     } catch (error) {
         return res.status(500).send({error:error.message});
@@ -77,6 +80,9 @@ exports.deleteGrant = async(req,res)=>{
         if(!grant){
             return res.status(400).send({message:"Grant is not available with this id"})
         }
+
+        await Grant.findByIdAndDelete(id);
+
         return res.status(200).json({
             message:"Grant deleted",
             data:grant

@@ -6,6 +6,7 @@ const fs = require("fs");
 const mongoose = require('mongoose')
 const path = require('path');
 const education = require("../model/EducationSchema");
+const Document = require("../model/DocumentSchema");
 
 module.exports = class UserController extends BaseController {
   async postuser(req, res) {
@@ -41,6 +42,15 @@ module.exports = class UserController extends BaseController {
 
         const Education = new education(EducationData);
         await Education.save()
+
+        const documentData={
+          userId:user._id,
+          docutment_type:null,
+          document_photo:null
+        }
+
+        const document = new Document(documentData);
+        await document.save();
 
         return this.sendJSONResponse(
           res,
