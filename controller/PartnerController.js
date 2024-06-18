@@ -5,16 +5,20 @@ exports.AddPartner = async (req, res) => {
 
         const { startupId, position, partner_name, DOB, city, state, country } = req.body;
         const file = req.file.filename;
+        const uniquePositions = ['CEO', 'CFO', 'CTO', 'CSO'];
 
-        if (position === 'CEO') {
-            const CheckCEO = await Partner.findOne({ startupId, position: 'CEO' });
-            if (CheckCEO) {
+        if (uniquePositions.map(pos => pos.toUpperCase()).includes(position.toUpperCase())) {
+            const existingPartner = await Partner.findOne({
+                startupId,
+                position: { $regex: new RegExp(`^${position}$`, 'i') } 
+            });
+
+            if (existingPartner) {
                 return res.status(400).json({
-                    error: "A CEO already exists for this startup."
+                    error: `A ${existingPartner.position} already exists for this startup.`
                 });
             }
         }
-
         const newPartner = new Partner({
             startupId,
             position,
@@ -49,15 +53,20 @@ exports.EditPartner = async (req, res) => {
             return res.status(400).send({ message: "partner is not available with this id" })
         }
 
-        if (position === 'CEO' && partner.position !== 'CEO') {
-            const checkCEO = await Partner.findOne({ startupId, position: 'CEO' });
-            if (checkCEO) {
+        const uniquePositions = ['CEO', 'CFO', 'CTO', 'CSO'];
+
+        if (uniquePositions.map(pos => pos.toUpperCase()).includes(position.toUpperCase())) {
+            const existingPartner = await Partner.findOne({
+                startupId,
+                position: { $regex: new RegExp(`^${position}$`, 'i') } 
+            });
+
+            if (existingPartner) {
                 return res.status(400).json({
-                    error: "A CEO already exists for this startup."
+                    error: `A ${existingPartner.position} already exists for this startup.`
                 });
             }
         }
-
         let updateData = {
             position,
             partner_name,
