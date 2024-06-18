@@ -12,6 +12,7 @@ router.post('/forgetPassword', (req, res) => admincontroller.forgetPassword(req,
 
 router.get('/all_user_display', auth, (req, res) => admincontroller.allUserDisplay(req, res));
 router.get('/user-display-by-id', auth, (req, res) => admincontroller.userDisplayById(req, res));
+router.put('/changeUserDocumentStatus/:id',auth,(req,res)=>admincontroller.documentStatusChange(req,res));
 
 router.get('/all_startup_display', auth, (req, res) => admincontroller.allStartupDisplay(req, res));
 router.get('/startup-display-by-id', auth, (req, res) => admincontroller.startupDisplayById(req, res))

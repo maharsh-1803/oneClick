@@ -12,8 +12,44 @@ const Document = require('../model/DocumentSchema');
 
 
 module.exports = class AdminController extends BaseController {
-
-    async  postadmin(req, res) {
+    documentStatusChange = async (req, res) => {
+        try {
+            const tokenData = req.userdata;
+            const { id } = req.params;
+            const { status } = req.body;
+    
+            const admin = await AdminSchema.findById(tokenData._id);
+            if (!admin) {
+                return res.status(403).json({
+                    message: "Only admin can change document status"
+                });
+            }
+    
+            if (!['approve', 'decline'].includes(status)) {
+                return res.status(400).json({
+                    message: "Invalid status value"
+                });
+            }
+    
+            const document = await Document.findByIdAndUpdate(
+                id,
+                { status: status },
+                { new: true } 
+            );
+    
+            if (!document) {
+                return res.status(404).json({ message: "Document not found" });
+            }
+    
+            return res.status(200).json({
+                message: "Document status changed successfully",
+                document: document
+            });
+        } catch (error) {
+            return res.status(500).send({ error: error.message });
+        }
+    };
+    async postadmin(req, res) {
         try {
             const data = {
                 username: req.body.username,
