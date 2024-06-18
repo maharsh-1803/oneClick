@@ -6,6 +6,15 @@ exports.AddPartner = async (req, res) => {
         const { startupId, position, partner_name, DOB, city, state, country } = req.body;
         const file = req.file.filename;
 
+        if (position === 'CEO') {
+            const CheckCEO = await Partner.findOne({ startupId, position: 'CEO' });
+            if (CheckCEO) {
+                return res.status(400).json({
+                    error: "A CEO already exists for this startup."
+                });
+            }
+        }
+
         const newPartner = new Partner({
             startupId,
             position,
@@ -17,6 +26,7 @@ exports.AddPartner = async (req, res) => {
             partner_photo: file
 
         })
+
         let result = await newPartner.save();
         return res.status(200).json({
             message: "patner create successfully",
@@ -37,6 +47,15 @@ exports.EditPartner = async (req, res) => {
         const partner = await Partner.findById(id);
         if (!partner) {
             return res.status(400).send({ message: "partner is not available with this id" })
+        }
+
+        if (position === 'CEO' && partner.position !== 'CEO') {
+            const checkCEO = await Partner.findOne({ startupId, position: 'CEO' });
+            if (checkCEO) {
+                return res.status(400).json({
+                    error: "A CEO already exists for this startup."
+                });
+            }
         }
 
         let updateData = {
