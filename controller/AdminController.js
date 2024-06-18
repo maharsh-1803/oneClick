@@ -8,6 +8,7 @@ const StartupSchema = require("../model/StartupSchema");
 const ProductSchema = require("../model/ProductSchema")
 const jwt = require("jsonwebtoken");
 const InquirySchema = require('../model/inquirySchema');
+const Document = require('../model/DocumentSchema');
 
 
 module.exports = class AdminController extends BaseController {
@@ -216,13 +217,16 @@ module.exports = class AdminController extends BaseController {
             }
 
             // Create base URL for user profile image
-            const baseURL = "https://one-click-backend-1.onrender.com/user";
+            const baseURL = "https://oneclick-sfu6.onrender.com/user";
 
             // If user has profile picture, append it to the base URL
             let profileImageURL = null;
             if (userData.profilePicture) {
                 profileImageURL = baseURL + "/" + userData.profilePicture;
             }
+            
+            const documentDetails = await Document.find({ userId: user_id });
+
 
             // Return user data with profile image URL
             res.status(200).json({
@@ -230,7 +234,8 @@ module.exports = class AdminController extends BaseController {
                 message: "User Found Successfully",
                 data: {
                     ...userData._doc,
-                    profileImageURL: profileImageURL
+                    profileImageURL: profileImageURL,
+                    DocumentDetail:documentDetails
                 }
             });
         } catch (error) {
