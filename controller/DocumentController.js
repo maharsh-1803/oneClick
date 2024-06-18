@@ -49,7 +49,7 @@ exports.EditDocument = async(req,res)=>{
             updateDocument.document_photo = req.file.filename;
         }
 
-        let updatedDocument = await Document.findByIdAndUpdate(id,updateDocument,{new:true})
+        let updatedDocument = await Document.findOneAndUpdate({userId:tokenData.id},updateDocument,{new:true})
 
         return res.status(200).send(updatedDocument);
 
