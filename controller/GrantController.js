@@ -28,10 +28,6 @@ exports.EditGrant = async (req, res) => {
         const { id } = req.params;
         const { grant_name, grant_amount, date_when_available, grant_from, other_details } = req.body;
 
-        if (!grant_name || !grant_amount || !date_when_available || !grant_from) {
-            return res.status(400).send({ message: "All fields are required" });
-        }
-
         const grant = await Grant.findById(id);
         if (!grant) {
             return res.status(404).send({ message: "Grant not found with this ID" });

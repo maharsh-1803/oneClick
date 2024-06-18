@@ -10,7 +10,7 @@ exports.AddPartner = async (req, res) => {
         if (uniquePositions.map(pos => pos.toUpperCase()).includes(position.toUpperCase())) {
             const existingPartner = await Partner.findOne({
                 startupId,
-                position: { $regex: new RegExp(`^${position}$`, 'i') } 
+                position: { $regex: new RegExp(`^${position}$`, 'i') }
             });
 
             if (existingPartner) {
@@ -58,7 +58,7 @@ exports.EditPartner = async (req, res) => {
         if (uniquePositions.map(pos => pos.toUpperCase()).includes(position.toUpperCase())) {
             const existingPartner = await Partner.findOne({
                 startupId,
-                position: { $regex: new RegExp(`^${position}$`, 'i') } 
+                position: { $regex: new RegExp(`^${position}$`, 'i') }
             });
 
             if (existingPartner) {
@@ -107,26 +107,25 @@ exports.DeletePartner = async (req, res) => {
 
 exports.getPartner = async (req, res) => {
     const { id } = req.params;
-    const baseURL = "https://oneclick-sfu6.onrender.com/partner"; 
+    const baseURL = "https://oneclick-sfu6.onrender.com/partner";
     
     try {
-        const partners = await Partner.findOne({ startupId: id });
+        const partners = await Partner.find({ startupId: id });
         
-        if (!partners) {
+        if (partners.length === 0) {
             return res.status(404).send({ message: "There are no partners within this startup" });
         }
 
-        
-        const partnersWithProfileImageURL = {
-            ...partners.toObject(), 
-            partner_photo: baseURL + "/" + partners.partner_photo
-        };
+        const partnersWithProfileImageURL = partners.map(partner => ({
+            ...partner.toObject(), 
+            partner_photo: `${baseURL}/${partner.partner_photo}`
+        }));
 
         return res.status(200).json({
-            message:"partner get successfully",
-            data:partnersWithProfileImageURL
+            message: "Partners retrieved successfully",
+            data: partnersWithProfileImageURL
         });
     } catch (error) {
         return res.status(500).send({ error: error.message });
     }
-}
+};
