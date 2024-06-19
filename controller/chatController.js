@@ -9,21 +9,21 @@ exports.insertChat = async (req, res) => {
         let { inquiryId, message, receiverId, userId, screen } = req.body;
 
         let chat;
-        // if (screen === "user") {
+        if (screen === "user") {
             chat = new Chat({
                 inquiryId,
                 senderId: tokenData.id,
                 message,
                 receiverId
             });
-        // } else {
-        //     chat = new Chat({
-        //         inquiryId,
-        //         message,
-        //         senderId: receiverId,
-        //         receiverId: userId
-        //     });
-        // }
+        } else {
+            chat = new Chat({
+                inquiryId,
+                message,
+                senderId: receiverId,
+                receiverId: userId
+            });
+        }
 
         await chat.save();
 
