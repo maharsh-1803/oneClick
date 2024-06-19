@@ -33,7 +33,7 @@ exports.insertChat = async (req, res) => {
             io.to(receiverSocketId).emit('newMessage', chat);
         }
 
-        const senderSocketId = getReceiverSocketId(tokenData.id);
+        const senderSocketId = getReceiverSocketId(senderId);
 
         if (senderSocketId) {
             io.to(senderSocketId).emit('newMessage', chat);
