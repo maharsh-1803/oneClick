@@ -9,21 +9,21 @@ exports.insertChat = async (req, res) => {
         let { inquiryId, message, receiverId, userId, screen } = req.body;
 
         let chat;
-        if (screen === "user") {
+        // if (screen === "user") {
             chat = new Chat({
                 inquiryId,
                 senderId: tokenData.id,
                 message,
                 receiverId
             });
-        } else {
-            chat = new Chat({
-                inquiryId,
-                message,
-                senderId: receiverId,
-                receiverId: userId
-            });
-        }
+        // } else {
+        //     chat = new Chat({
+        //         inquiryId,
+        //         message,
+        //         senderId: receiverId,
+        //         receiverId: userId
+        //     });
+        // }
 
         await chat.save();
 
@@ -33,11 +33,11 @@ exports.insertChat = async (req, res) => {
             io.to(receiverSocketId).emit('newMessage', chat);
         }
 
-        const senderSocketId = getReceiverSocketId(tokenData.id);
+        // const senderSocketId = getReceiverSocketId(tokenData.id);
 
-        if (senderSocketId) {
-            io.to(senderSocketId).emit('newMessage', chat);
-        }
+        // if (senderSocketId) {
+        //     io.to(senderSocketId).emit('newMessage', chat);
+        // }
         console.log("socket message sent"+chat+" "+receiverId)
 
         return res.status(200).json({
