@@ -16,7 +16,7 @@ module.exports = class UserController extends BaseController {
         description: req.body.description,
         best_time_to_connect: req.body.best_time_to_connect,
       };
-      console.log(req.body);
+      // console.log(req.body);
 
       const inquirydata = new inquirySchema(data);
       const inquiry = await inquirydata.save();
