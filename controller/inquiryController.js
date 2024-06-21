@@ -140,6 +140,7 @@ module.exports = class UserController extends BaseController {
               "updatedAt": "$productData.updatedAt"
             },
             "startupData": {
+              "_id":"$startupData._id",
               "startupName": "$startupData.startupName",
               "address": "$startupData.address",
               "contactNumber": "$startupData.contactNumber",
