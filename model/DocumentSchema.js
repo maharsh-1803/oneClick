@@ -16,6 +16,7 @@ const DocumentSchema = new mongoose.Schema({
     status: {
         type: String,
         enum: ["approve", "decline", 'pending'],
+        require:true
     }
 }, { timestamps: true })
 

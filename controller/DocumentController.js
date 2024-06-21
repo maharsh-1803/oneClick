@@ -38,6 +38,10 @@ exports.EditDocument = async (req, res) => {
             return res.status(400).send({ message: "Document not found with this user ID" });
         }
 
+        if (document.status === 'approve') {
+            return res.status(400).json({ message: "Document status is 'approve'. Cannot edit." });
+        }
+
         let updateDocument = {
             document_type,
             status: 'pending'
