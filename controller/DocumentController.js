@@ -58,3 +58,32 @@ exports.EditDocument = async (req, res) => {
         return res.status(500).send({ error: error.message });
     }
 };
+
+exports.getDocument = async(req,res)=>{
+    try {
+        const tokenData = req.userdata;
+        const userId = tokenData.id;
+        console.log(userId);
+        const document = await Document.find({userId:userId})
+        if(!document){
+            return res.status(400).send({message:"no document available"})
+        }
+
+        const baseURL = "https://oneclick-sfu6.onrender.com/document";
+
+        const result = document.map(document=>({
+
+            ...document.toObject(), 
+            document_photo: `${baseURL}/${document.document_photo}`
+        }))
+
+        
+
+        return res.status(200).json({
+            message:"Document retrive successfully",
+            document:result
+        })
+    } catch (error) {
+        return res.status(500).send({error:error.message})
+    }
+}

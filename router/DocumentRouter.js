@@ -32,5 +32,6 @@ const upload = multer({
 
 router.post('/AddDocument',auth,upload.single('file'),DocumentController.AddDocument);
 router.put('/EditDocument',auth,upload.single('file'),DocumentController.EditDocument);
+router.get('/getDocument',auth,DocumentController.getDocument);
 
 module.exports = router;

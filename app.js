@@ -43,10 +43,11 @@ app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 
 // Set view image
-app.use("/", express.static("./storage/images/startup"));
+app.use("/startup", express.static("./storage/images/startup"));
 app.use("/user", express.static("./storage/images/profile"));
 app.use("/product", express.static("./storage/images/product"));
 app.use("/partner", express.static("./storage/images/partner"));
+app.use('/document',express.static('./storage/images/document'))
 
 app.use(logger("dev"));
 app.use(express.json());

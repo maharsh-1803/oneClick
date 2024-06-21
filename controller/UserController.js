@@ -26,7 +26,7 @@ module.exports = class UserController extends BaseController {
           address: req.body.address,
           city: req.body.city,
           state: req.body.state,
-          profilePicture: req.file ? req.file.path : null,
+          profilePicture: req.file ? req.file.filename : null,
           pincode: req.body.pincode,
           DOB:req.body.DOB
         };

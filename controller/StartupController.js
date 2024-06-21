@@ -117,7 +117,7 @@ module.exports = class StartupController extends BaseController {
       ]);
 
       // Define your base URL here
-      const baseURL = "https://one-click-backend-1.onrender.com";
+      const baseURL = "https://oneclick-sfu6.onrender.com/startup";
 
       // Map each startup data to include the full URL of the logo
       const basicData = data.map(startup => {
