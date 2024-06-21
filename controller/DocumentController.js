@@ -55,8 +55,17 @@ exports.EditDocument = async (req, res) => {
         let updatedDocument = await Document.findOneAndUpdate(
             { userId: tokenData.id }, updateDocument, { new: true }
         );
+        const baseURL = "https://oneclick-sfu6.onrender.com/document";
+        const result = {
+            ...updatedDocument.toObject(),
+            document_photo: `${baseURL}/${updatedDocument.document_photo}`
+        };
 
-        return res.status(200).send(updatedDocument);
+
+        return res.status(200).json({
+            message:"document updated successfully",
+            document:result
+        });
 
     } catch (error) {
         return res.status(500).send({ error: error.message });
