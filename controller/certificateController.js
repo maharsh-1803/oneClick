@@ -165,13 +165,19 @@ module.exports = class UserController extends BaseController {
         });
       }
 
+      const baseURL = "https://oneclick-sfu6.onrender.com/certificate";
+        const result = {
+            ...certificate.toObject(),
+            photos: `${baseURL}/${certificate.photos}`
+        };
+
       return this.sendJSONResponse(
         res,
         "Certificate",
         {
           length: 1,
         },
-        certificate
+        result
       );
     } catch (error) {
       if (error instanceof NotFound) {

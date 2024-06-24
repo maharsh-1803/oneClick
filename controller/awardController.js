@@ -157,13 +157,19 @@ module.exports = class UserController extends BaseController {
         });
       }
 
+      const baseURL = "https://oneclick-sfu6.onrender.com/award";
+        const result = {
+            ...award.toObject(),
+            photos: `${baseURL}/${award.photos}`
+        };
+
       return this.sendJSONResponse(
         res,
         "Award",
         {
           length: 1,
         },
-        award
+        result
       );
     } catch (error) {
       if (error instanceof NotFound) {
