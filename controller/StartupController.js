@@ -266,6 +266,15 @@ module.exports = class StartupController extends BaseController {
         ]);
       }
 
+      const baseURL = "https://oneclick-sfu6.onrender.com/startup";
+      const DetailDataModified = detailData.map(startup => {
+        return {
+          ...startup,
+          startupLogoURL: baseURL + "/" + startup.startupLogo // Assuming startupLogo contains only filename
+        };
+      });
+
+
       console.log("detailData", detailData);
       return this.sendJSONResponse(
         res,

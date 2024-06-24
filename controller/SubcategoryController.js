@@ -169,42 +169,39 @@ module.exports = class SubcategoryController extends BaseController {
 
   async subcategory_display_all(req, res) {
     try {
-      // const allSubcategory = await SubcategorySchema.find({});
+        // Aggregating subcategories with their respective categories
+        const allSubcategory = await SubcategorySchema.aggregate([
+            {
+                $lookup: {
+                    from: "categories",
+                    localField: "categoryId",
+                    foreignField: "_id",
+                    as: "category",
+                },
+            },
+        ]);
 
-      const allSubcategory = await SubcategorySchema.aggregate([
-        {
-          $lookup: {
-            from: "categories",
-            localField: "categoryId",
-            foreignField: "_id",
-            as: "category",
-          },
-        },
-      ]);
+        const baseURL = "https://oneclick-sfu6.onrender.com/subcategory";
 
-      const baseURL = "https://oneclick-sfu6.onrender.com/subcategory";
+        // Mapping subcategories to include the full URL for their photos
+        const modifiedSubcategories = allSubcategory.map(subCategory => ({
+            ...subCategory,
+            subcategoryPhoto: `${baseURL}/${subCategory.subcategoryPhoto}`
+        }));
 
-      const modifiedSubcategories = allSubcategory.map(subCategory => ({
-        ...subCategory,
-        subcategoryPhoto: `${baseURL}/${subCategory.subcategoryPhoto}`
-    }));
-
-
-      return this.sendJSONResponse(
-        res,
-        "All Subcategory",
-        {
-          length: 1,
-        },
-        {allSubcategory:modifiedSubcategories}
-      );
+        return this.sendJSONResponse(
+            res,
+            "All Subcategory",
+            {
+                length: modifiedSubcategories.length, // Set length to the number of subcategories
+            },
+            modifiedSubcategories // Directly return the modifiedSubcategories array
+        );
     } catch (error) {
-      if (error instanceof NotFound) {
-        throw error;
-      }
-      return this.sendErrorResponse(req, res, error);
+        return this.sendErrorResponse(req, res, error);
     }
-  }
+}
+
   
   async subcategory_display_by_category(req, res) {
     try {

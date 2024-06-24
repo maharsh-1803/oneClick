@@ -165,29 +165,29 @@ module.exports = class CategoryController extends BaseController {
 
   async category_display_all(req, res) {
     try {
-      const allCategory = await CategorySchema.find();
-      const baseURL = "https://oneclick-sfu6.onrender.com/category";
+        const allCategory = await CategorySchema.find();
+        const baseURL = "https://oneclick-sfu6.onrender.com/category";
 
-      const modifiedCategories = allCategory.map(category => ({
-        ...category.toObject(),
-        categoryPhoto: `${baseURL}/${category.categoryPhoto}`
-    }));
+        const modifiedCategories = allCategory.map(category => ({
+            ...category.toObject(),
+            categoryPhoto: `${baseURL}/${category.categoryPhoto}`
+        }));
 
-      return this.sendJSONResponse(
-        res,
-        "All Category",
-        {
-          length: 1,
-        },
-        {allCategory : modifiedCategories},
-      );
+        return this.sendJSONResponse(
+            res,
+            "All Category",
+            {
+                length: modifiedCategories.length,  // Set length to the number of categories
+            },
+            modifiedCategories  // Directly return the modifiedCategories array
+        );
     } catch (error) {
-      if (error instanceof NotFound) {
-        throw error;
-      }
-      return this.sendErrorResponse(req, res, error);
+        if (error instanceof NotFound) {
+            throw error;
+        }
+        return this.sendErrorResponse(req, res, error);
     }
-  }
+}
 
   async category_display_all_withoutAuth(req, res) {
     try {
