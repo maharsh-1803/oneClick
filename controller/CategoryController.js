@@ -179,7 +179,8 @@ module.exports = class CategoryController extends BaseController {
             {
                 length: modifiedCategories.length,  // Set length to the number of categories
             },
-            modifiedCategories  // Directly return the modifiedCategories array
+            // modifiedCategories  // Directly return the modifiedCategories array
+            allCategory
         );
     } catch (error) {
         if (error instanceof NotFound) {
@@ -243,8 +244,8 @@ module.exports = class CategoryController extends BaseController {
           length: 1,
         },
         {
-          allCategory:modifiedCategories,
-          allSubcategory:modifiedSubCategories,
+          allCategory,
+          allSubcategory
         }
       );
     } catch (error) {

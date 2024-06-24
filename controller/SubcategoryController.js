@@ -65,7 +65,7 @@ module.exports = class SubcategoryController extends BaseController {
         {
           length: 1,
         },
-        {subCategory:modifiedSubcategories}
+        subCategory
       );
     } catch (error) {
       if (error instanceof NotFound) {
@@ -169,7 +169,6 @@ module.exports = class SubcategoryController extends BaseController {
 
   async subcategory_display_all(req, res) {
     try {
-        // Aggregating subcategories with their respective categories
         const allSubcategory = await SubcategorySchema.aggregate([
             {
                 $lookup: {
@@ -183,7 +182,7 @@ module.exports = class SubcategoryController extends BaseController {
 
         const baseURL = "https://oneclick-sfu6.onrender.com/subcategory";
 
-        // Mapping subcategories to include the full URL for their photos
+        
         const modifiedSubcategories = allSubcategory.map(subCategory => ({
             ...subCategory,
             subcategoryPhoto: `${baseURL}/${subCategory.subcategoryPhoto}`
@@ -193,9 +192,9 @@ module.exports = class SubcategoryController extends BaseController {
             res,
             "All Subcategory",
             {
-                length: modifiedSubcategories.length, // Set length to the number of subcategories
+                length: 1, 
             },
-            modifiedSubcategories // Directly return the modifiedSubcategories array
+            allSubcategory
         );
     } catch (error) {
         return this.sendErrorResponse(req, res, error);
@@ -224,7 +223,7 @@ module.exports = class SubcategoryController extends BaseController {
         {
           length: subcategories.length,
         },
-        {subcategories:modifiedSubcategories}
+        subcategories
       );
     } catch (error) {
       if (error instanceof NotFound) {
