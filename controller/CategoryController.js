@@ -179,8 +179,8 @@ module.exports = class CategoryController extends BaseController {
             {
                 length: modifiedCategories.length,  // Set length to the number of categories
             },
-            // modifiedCategories  // Directly return the modifiedCategories array
-            allCategory
+            modifiedCategories  // Directly return the modifiedCategories array
+            // allCategory
         );
     } catch (error) {
         if (error instanceof NotFound) {
@@ -223,19 +223,19 @@ module.exports = class CategoryController extends BaseController {
           },
         },
       ]);
-    //   const baseURLCategory = "https://oneclick-sfu6.onrender.com/category";
+      const baseURLCategory = "https://oneclick-sfu6.onrender.com/category";
 
-    //   const modifiedCategories = allCategory.map(category => ({
-    //     ...category.toObject(),
-    //     categoryPhoto: `${baseURLCategory}/${category.categoryPhoto}`
-    // }));
+      const modifiedCategories = allCategory.map(category => ({
+        ...category.toObject(),
+        categoryPhoto: `${baseURLCategory}/${category.categoryPhoto}`
+    }));
 
-    //   const baseURLsubCategory = "https://oneclick-sfu6.onrender.com/subcategory";
+      const baseURLsubCategory = "https://oneclick-sfu6.onrender.com/subcategory";
 
-    //   const modifiedSubCategories = allSubcategory.map(subcategory=>({
-    //     ...subcategory.toObject(),
-    //     subcategoryPhoto:`${baseURLsubCategory}/${subcategory.subcategoryPhoto}`
-    //   }))
+      const modifiedSubCategories = allSubcategory.map(subcategory=>({
+        ...subcategory,
+        subcategoryPhoto:`${baseURLsubCategory}/${subcategory.subcategoryPhoto}`
+      }))
 
       return this.sendJSONResponse(
         res,
