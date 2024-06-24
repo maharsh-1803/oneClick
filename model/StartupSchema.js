@@ -87,7 +87,7 @@ const startupschema = new mongoose.Schema(
     },
 
     yearOfEstablished: {
-      type: Number,
+      type: Date,
       required: true,
     },
 
