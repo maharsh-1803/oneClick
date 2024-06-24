@@ -165,7 +165,13 @@ module.exports = class CategoryController extends BaseController {
 
   async category_display_all(req, res) {
     try {
-      const allCategory = await CategorySchema.find({});
+      const allCategory = await CategorySchema.find();
+      const baseURL = "https://oneclick-sfu6.onrender.com/category";
+
+      const modifiedCategories = allCategory.map(category => ({
+        ...category.toObject(),
+        categoryPhoto: `${baseURL}/${category.categoryPhoto}`
+    }));
 
       return this.sendJSONResponse(
         res,
@@ -173,7 +179,7 @@ module.exports = class CategoryController extends BaseController {
         {
           length: 1,
         },
-        allCategory
+        {allCategory : modifiedCategories},
       );
     } catch (error) {
       if (error instanceof NotFound) {
@@ -216,6 +222,19 @@ module.exports = class CategoryController extends BaseController {
           },
         },
       ]);
+      const baseURLCategory = "https://oneclick-sfu6.onrender.com/category";
+
+      const modifiedCategories = allCategory.map(category => ({
+        ...category.toObject(),
+        categoryPhoto: `${baseURLCategory}/${category.categoryPhoto}`
+    }));
+
+      const baseURLsubCategory = "https://oneclick-sfu6.onrender.com/subcategory";
+
+      const modifiedSubCategories = allSubcategory.map(subcategory=>({
+        ...subcategory.toObject(),
+        subcategoryPhoto:`${baseURLsubCategory}/${subcategory.subcategoryPhoto}`
+      }))
 
       return this.sendJSONResponse(
         res,
@@ -224,8 +243,8 @@ module.exports = class CategoryController extends BaseController {
           length: 1,
         },
         {
-          allCategory,
-          allSubcategory,
+          allCategory:modifiedCategories,
+          allSubcategory:modifiedSubCategories,
         }
       );
     } catch (error) {

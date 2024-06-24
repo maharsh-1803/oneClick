@@ -10,35 +10,33 @@ module.exports = class SubcategoryController extends BaseController {
   
   async subcategory_insert(req, res) {
     try {
-      // const tokenData = req.userdata;
+        const payload = req.body;
 
-      const payload = req.body;
+        let imgUrl = "";
 
-      var imgUrl = "";
+        if (req.file) {
+            imgUrl = req.file.filename;
+        }
 
-      if (req.file) imgUrl = `${req.file.filename}`;
+        payload.subcategoryPhoto = imgUrl;
 
-      payload.subcategoryPhoto = imgUrl;
+        const subcategoryData = new SubcategorySchema(payload);
 
-      var subcategoryData = new SubcategorySchema(payload);
+        const newSubcategory = await subcategoryData.save();
 
-      const newSubcategory = await subcategoryData.save();
-
-      return this.sendJSONResponse(
-        res,
-        "data saved",
-        {
-          length: 1,
-        },
-        newSubcategory
-      );
+        return this.sendJSONResponse(
+            res,
+            "Data saved",
+            {
+                length: 1,
+            },
+            newSubcategory
+        );
     } catch (error) {
-      if (error instanceof NotFound) {
-        throw error;
-      }
-      return this.sendErrorResponse(req, res, error);
+        return this.sendErrorResponse(req, res, error);
     }
-  }
+}
+
 
   async display_by_id(req, res) {
     try {
@@ -54,13 +52,20 @@ module.exports = class SubcategoryController extends BaseController {
         });
       }
 
+      const baseURL = "https://oneclick-sfu6.onrender.com/subcategory";
+
+      const modifiedSubcategories = subCategory.map(subCategory => ({
+        ...subCategory,
+        subcategoryPhoto: `${baseURL}/${subCategory.subcategoryPhoto}`
+    }));
+
       return this.sendJSONResponse(
         res,
         "Subcategory Information",
         {
           length: 1,
         },
-        subCategory
+        {subCategory:modifiedSubcategories}
       );
     } catch (error) {
       if (error instanceof NotFound) {
@@ -177,13 +182,21 @@ module.exports = class SubcategoryController extends BaseController {
         },
       ]);
 
+      const baseURL = "https://oneclick-sfu6.onrender.com/subcategory";
+
+      const modifiedSubcategories = allSubcategory.map(subCategory => ({
+        ...subCategory,
+        subcategoryPhoto: `${baseURL}/${subCategory.subcategoryPhoto}`
+    }));
+
+
       return this.sendJSONResponse(
         res,
         "All Subcategory",
         {
           length: 1,
         },
-        allSubcategory
+        {allSubcategory:modifiedSubcategories}
       );
     } catch (error) {
       if (error instanceof NotFound) {
@@ -201,13 +214,20 @@ module.exports = class SubcategoryController extends BaseController {
         categoryId: category_id,
       });
 
+      const baseURL = "https://oneclick-sfu6.onrender.com/subcategory";
+
+      const modifiedSubcategories = subcategories.map(subCategory => ({
+        ...subCategory,
+        subcategoryPhoto: `${baseURL}/${subCategory.subcategoryPhoto}`
+    }));
+
       return this.sendJSONResponse(
         res,
         "Subcategories by Category",
         {
           length: subcategories.length,
         },
-        subcategories
+        {subcategories:modifiedSubcategories}
       );
     } catch (error) {
       if (error instanceof NotFound) {

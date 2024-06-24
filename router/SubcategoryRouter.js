@@ -3,12 +3,30 @@ var router = express.Router();
 const SubcategoryController = require("../controller/SubcategoryController");
 const subcategorycontroller = new SubcategoryController();
 
-const fileUpload = require("../middleware/fileUpload");
 const auth = require("../middleware/auth");
+const multer = require('multer');
+const path = require('path')
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+      cb(null, "storage/images/subcategory");
+  },
+  filename: function (req, file, cb) {
+      cb(
+          null,
+          `${file.fieldname}_${Date.now()}${path.extname(file.originalname)}`
+      );
+  }
+})
+
+const upload = multer({
+    storage:storage
+})
+
 
 router.post(
   "/create",
-  fileUpload("storage/images/subcategory"),
+  upload.single('file'),
   auth,
   (req, res) => subcategorycontroller.subcategory_insert(req, res)
 );
@@ -17,7 +35,7 @@ router.get("/read", auth, (req, res) =>
 );
 router.post(
   "/update",
-  fileUpload("storage/images/subcategory"),
+  upload.single('file'),
   auth,
   (req, res) => subcategorycontroller.subcategory_update(req, res)
 );

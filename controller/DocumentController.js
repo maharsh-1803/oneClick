@@ -85,7 +85,6 @@ exports.getDocument = async(req,res)=>{
         const baseURL = "https://oneclick-sfu6.onrender.com/document";
 
         const result = document.map(document=>({
-
             ...document.toObject(), 
             document_photo: `${baseURL}/${document.document_photo}`
         }))

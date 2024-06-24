@@ -48,6 +48,10 @@ app.use("/user", express.static("./storage/images/profile"));
 app.use("/product", express.static("./storage/images/product"));
 app.use("/partner", express.static("./storage/images/partner"));
 app.use('/document',express.static('./storage/images/document'))
+app.use('/certificate',express.static('./storage/images/certificate'))
+app.use('/award',express.static('./storage/images/award'));
+app.use('/category',express.static('./storage/images/category'))
+app.use('/subcategory',express.static('./storage/images/subcategory'))
 
 app.use(logger("dev"));
 app.use(express.json());
