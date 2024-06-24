@@ -82,6 +82,7 @@ module.exports = class SubcategoryController extends BaseController {
 
       var imgUrl = "";
       if (req.file) imgUrl = `${req.file.filename}`;
+      console.log(req.file)
 
       req.body.subcategoryPhoto = imgUrl;
 
@@ -94,18 +95,23 @@ module.exports = class SubcategoryController extends BaseController {
           message: "Incorrect id",
         });
       }
+      const baseURL = "https://oneclick-sfu6.onrender.com/subcategory";
+
 
       if (subCategory) {
-        const photoInfo = subCategory.subcategoryPhoto;
+        // const photoInfo = subCategory.subcategoryPhoto;
 
         // if (photoInfo) {
         //   fs.unlinkSync("storage/images/subcategory/" + photoInfo);
         // }
 
-        const newSubCategory = await SubcategorySchema.updateOne(
+        const newSubCategory = await SubcategorySchema.findOneAndUpdate(
           { _id: subcategory_id },
-          req.body
+          req.body,
+          {new:true}
         );
+
+        newSubCategory.subcategoryPhoto = `${baseURL}/${newSubCategory.subcategoryPhoto}`;
 
         return this.sendJSONResponse(
           res,

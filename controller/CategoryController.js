@@ -43,8 +43,6 @@ module.exports = class CategoryController extends BaseController {
 
   async display_by_id(req, res) {
     try {
-      const tokenData = req.userdata;
-
       const category_id = req.query.category_id;
 
       const category = await CategorySchema.aggregate([
@@ -62,6 +60,20 @@ module.exports = class CategoryController extends BaseController {
           },
         },
       ]);
+      const baseURLCategory = "https://oneclick-sfu6.onrender.com/category";
+      const baseURLSubcategory = "https://oneclick-sfu6.onrender.com/subcategory";
+
+      category.forEach(cat => {
+          cat.categoryPhoto = `${baseURLCategory}/${cat.categoryPhoto}`;
+      });
+
+      category.forEach(cat => {
+          cat.subcategory.forEach(sub => {
+              sub.subcategoryPhoto = `${baseURLSubcategory}/${sub.subcategoryPhoto}`;
+          });
+      });
+
+
 
       return this.sendJSONResponse(
         res,
