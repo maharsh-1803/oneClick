@@ -65,53 +65,53 @@ module.exports = class UserController extends BaseController {
 
   async certificate_edit(req, res) {
     try {
-      const tokenData = req.userdata;
+        const tokenData = req.userdata;
 
-      const certificate_id = req.query.certificate_id;
+        const certificate_id = req.query.certificate_id;
 
-      const certificate = await certificateSchema.findOne({
-        _id: certificate_id,
-      });
-
-      if (!certificate) {
-        return res.status(400).json({
-          message: "Incorrect code",
+        const certificate = await certificateSchema.findOne({
+            _id: certificate_id,
         });
-      }
 
-      // if (certificate.photos) {
-      //   fs.unlinkSync("" + certificate.photos);
-      // }
-
-      const newCertificate = await certificateSchema.updateOne(
-        { _id: certificate_id },
-        {
-          $set: {
-            certicertificateName: req.certificateName,
-            competitionName: req.body.competitionName,
-            certicertificateYear: req.certificateYear,
-            certicertificatePlace: req.certificatePlace,
-            description: req.body.description,
-            photos: req.file ? req.file.filename : "",
-          },
+        if (!certificate) {
+            return res.status(400).json({
+                message: "Incorrect code",
+            });
         }
-      );
 
-      return this.sendJSONResponse(
-        res,
-        "certificate",
-        {
-          length: 1,
-        },
-        newCertificate
-      );
+        const updateData = {
+            certificateName: req.body.certificateName,
+            competitionName: req.body.competitionName,
+            certificateYear: req.body.certificateYear,
+            certificatePlace: req.body.certificatePlace,
+            description: req.body.description,
+        };
+
+        if (req.file) {
+            updateData.photos = req.file.filename;
+        }
+
+        const newCertificate = await certificateSchema.findOneAndUpdate(
+            { _id: certificate_id },
+            updateData,
+            { new: true }
+        );
+
+        return this.sendJSONResponse(
+            res,
+            "certificate updated successfully",
+            {
+                length: 1,
+            },
+            newCertificate
+        );
     } catch (error) {
-      if (error instanceof NotFound) {
-        throw error;
-      }
-      return this.sendErrorResponse(req, res, error);
+        if (error instanceof NotFound) {
+            throw error;
+        }
+        return this.sendErrorResponse(req, res, error);
     }
-  }
+}
 
   async certificate_delete(req, res) {
     try {
@@ -132,7 +132,7 @@ module.exports = class UserController extends BaseController {
       //   fs.unlinkSync("storage/images/certificate/" + certificate.photos);
       // }
 
-      const newCertificate = await certificateSchema.deleteOne({
+      const newCertificate = await certificateSchema.findOneAndDelete({
         _id: certificate_id,
       });
 

@@ -129,11 +129,11 @@ module.exports = class UserController extends BaseController {
       //   fs.unlinkSync("./storage/images/award/" + el);
       // });
 
-      const newAward = await awardSchema.deleteOne({ _id: award_id });
+      const newAward = await awardSchema.findOneAndDelete({ _id: award_id });
 
       return this.sendJSONResponse(
         res,
-        "award",
+        "award deleted successfully",
         {
           length: 1,
         },
