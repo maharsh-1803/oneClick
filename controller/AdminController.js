@@ -9,6 +9,7 @@ const ProductSchema = require("../model/ProductSchema");
 const jwt = require("jsonwebtoken");
 const InquirySchema = require('../model/inquirySchema');
 const Document = require('../model/DocumentSchema');
+const Education = require('../model/EducationSchema');
 
 
 module.exports = class AdminController extends BaseController {
@@ -58,7 +59,7 @@ module.exports = class AdminController extends BaseController {
 
             const admindata = new AdminSchema(data)
             const admin = await admindata.save();
-
+            admin.password=undefined;
             return this.sendJSONResponse(
                 res,
                 "data saved",
@@ -148,8 +149,8 @@ module.exports = class AdminController extends BaseController {
             }
 
             // Update password
-            admin.password = newPassword;
             await admin.save();
+            admin.password = undefined;
 
             return res.status(200).json({
                 message: 'Password changed successfully',
@@ -213,6 +214,7 @@ module.exports = class AdminController extends BaseController {
                 res.status(200).json({
                     success: true,
                     message: "User Find Successfully",
+                    length:allUserData.length,
                     data: allUserData
                 })
             } else {
@@ -235,50 +237,95 @@ module.exports = class AdminController extends BaseController {
             let user_id = req.query.user_id;
             let tokenData = req.userdata;
             const admin = await AdminSchema.findById(tokenData);
-
+    
             if (!admin) {
                 return res.status(404).json({
                     success: false,
                     message: 'Admin not found'
                 });
             }
-
-            let userData = await UserSchema.findById(user_id).select('-password');
-
-            if (!userData) {
+    
+            const baseURL = "https://oneclick-sfu6.onrender.com/user";
+            const baseURLDocument = "https://oneclick-sfu6.onrender.com/document";
+    
+            const userAggregation = await UserSchema.aggregate([
+                { $match: { _id: mongoose.Types.ObjectId(user_id) } },
+                {
+                    $lookup: {
+                        from: "documents",
+                        localField: "_id",
+                        foreignField: "userId",
+                        as: "DocumentDetail"
+                    }
+                },
+                {
+                    $lookup: {
+                        from: "educations",
+                        localField: "_id",
+                        foreignField: "userId",
+                        as: "EducationDetails"
+                    }
+                },
+                {
+                    $addFields: {
+                        profileImageURL: {
+                            $cond: {
+                                if: { $gt: ["$profilePicture", null] },
+                                then: { $concat: [baseURL, "/", "$profilePicture"] },
+                                else: null
+                            }
+                        },
+                        DocumentDetail: {
+                            $map: {
+                                input: "$DocumentDetail",
+                                as: "doc",
+                                in: {
+                                    $mergeObjects: [
+                                        "$$doc",
+                                        {
+                                            DocumentImageURL: {
+                                                $cond: {
+                                                    if: { $gt: ["$$doc.document_photo", null] },
+                                                    then: { $concat: [baseURLDocument, "/", "$$doc.document_photo"] },
+                                                    else: null
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    $project: {
+                        password: 0,
+                        profilePicture: 0
+                    }
+                }
+            ]);
+    
+            if (!userAggregation || userAggregation.length === 0) {
                 return res.status(400).json({
                     success: false,
                     message: "User Not Found!"
                 });
             }
-
-            // Create base URL for user profile image
-            const baseURL = "https://oneclick-sfu6.onrender.com/user";
-
-            // If user has profile picture, append it to the base URL
-            let profileImageURL = null;
-            if (userData.profilePicture) {
-                profileImageURL = baseURL + "/" + userData.profilePicture;
-            }
-            
-            const documentDetails = await Document.find({ userId: user_id });
-
-
-            // Return user data with profile image URL
+    
+            const userData = userAggregation[0];
+    
             res.status(200).json({
                 success: true,
                 message: "User Found Successfully",
-                data: {
-                    ...userData._doc,
-                    profileImageURL: profileImageURL,
-                    DocumentDetail:documentDetails
-                }
+                data: userData
             });
         } catch (error) {
             // Handle errors
             return this.sendErrorResponse(req, res, error);
         }
     }
+    
+    
 
 
     async allStartupDisplay(req, res) {
@@ -297,6 +344,7 @@ module.exports = class AdminController extends BaseController {
                 res.status(200).json({
                     success: true,
                     message: "startup Find Successfully",
+                    length:startupData.length,
                     data: startupData
                 })
             } else {
@@ -313,64 +361,92 @@ module.exports = class AdminController extends BaseController {
         }
     }
 
-
     async startupDisplayById(req, res) {
         try {
             let startupId = req.query.startupId;
             let tokenData = req.userdata;
             const admin = await AdminSchema.findById(tokenData);
-
+    
             if (!admin) {
                 return res.status(404).json({
                     success: false,
                     message: 'Admin not found'
                 });
             }
-
+    
             let startupData = await StartupSchema.aggregate([
                 {
                     $match: { _id: mongoose.Types.ObjectId(startupId) }
                 },
                 {
                     $lookup: {
-                        from: 'products', // Assuming your product collection is named 'products'
-                        localField: '_id', // Field from startup schema
-                        foreignField: 'startupId', // Field from product schema referencing startup
-                        as: 'products' // Field to store matched products
+                        from: 'products',
+                        localField: '_id',
+                        foreignField: 'startupId',
+                        as: 'products'
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'partners',
+                        localField: '_id',
+                        foreignField: 'startupId',
+                        as: 'partners'
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'grants',
+                        localField: "_id",
+                        foreignField: 'startupId',
+                        as: 'grants'
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'investments',
+                        localField: '_id',
+                        foreignField: 'startupId',
+                        as: 'investments'
                     }
                 }
             ]);
-
+    
             if (startupData.length === 0) {
                 return res.status(404).json({
                     success: false,
                     message: 'Startup not found'
                 });
             }
-
-            const startupBaseURL = 'https://one-click-backend-1.onrender.com/startup'; // Replace 'https://your-base-url.com' with your actual base URL
-
-            // Update startup logo URL
+    
+            const startupBaseURL = 'https://oneclick-sfu6.onrender.com/startup';
+            const productBaseURL = 'https://oneclick-sfu6.onrender.com/product';
+            const partnerBaseURL = 'https://oneclick-sfu6.onrender.com/partner';
+    
             if (startupData[0].startupLogo) {
                 startupData[0].startupLogo = `${startupBaseURL}/${startupData[0].startupLogo}`;
             }
-
-
-            const baseURL = 'https://one-click-backend-1.onrender.com/product'; // Replace 'https://your-base-url.com' with your actual base URL
-
-            // Iterate through each product and update productPhotos URLs
+    
             startupData[0].products.forEach(product => {
                 if (product.productPhotos) {
-                    product.productPhotos = product.productPhotos.map(photo => `${baseURL}/${photo}`);
+                    product.productPhotos = product.productPhotos.map(photo => `${productBaseURL}/${photo}`);
                 }
             });
-
+    
+            startupData[0].partners.forEach(partner => {
+                if (partner.partner_photo) {
+                    partner.partner_photo = `${partnerBaseURL}/${partner.partner_photo}`;
+                }
+            });
+    
+            console.log('Startup Data:', JSON.stringify(startupData, null, 2));
+    
             return res.json({
                 success: true,
                 message: 'Startup details retrieved successfully',
-                startup: startupData[0] // Assuming only one startup is expected
+                startup: startupData[0]
             });
-
+    
         } catch (error) {
             if (error instanceof NotFound) {
                 throw error;
@@ -378,6 +454,7 @@ module.exports = class AdminController extends BaseController {
             return this.sendErrorResponse(req, res, error);
         }
     }
+    
 
 
     async productDisplayById(req, res) {
@@ -433,6 +510,9 @@ module.exports = class AdminController extends BaseController {
                 });
             }
             let allInquiry = await InquirySchema.find();
+            if(allInquiry.length===0){
+                return res.status(400).send({message:"inquiries not found"});
+            }
             if (allInquiry) {
                 res.status(200).json({
                     success: true,
@@ -464,6 +544,11 @@ module.exports = class AdminController extends BaseController {
                 success: false,
                 message: 'Admin not found'
             });
+        }
+        const inquiry = await InquirySchema.findById(inquiry_id);
+        if(!inquiry)
+        {
+            return res.status(400).send({message:"inquiry not found"})
         }
         let inquiryData = await InquirySchema.aggregate([
             {
