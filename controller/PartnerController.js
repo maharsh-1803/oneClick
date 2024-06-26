@@ -2,23 +2,29 @@ const Partner = require('../model/PartnerSchema');
 
 exports.AddPartner = async (req, res) => {
     try {
-
         const { startupId, position, partner_name, DOB, city, state, country } = req.body;
         const file = req.file.filename;
-        const uniquePositions = ['CEO', 'CFO', 'CTO', 'CSO'];
+        const uniquePositions = ['CEO', 'CFO', 'CTO', 'CSO', 'CMO'];
 
-        if (uniquePositions.map(pos => pos.toUpperCase()).includes(position.toUpperCase())) {
-            const existingPartner = await Partner.findOne({
-                startupId,
-                position: { $regex: new RegExp(`^${position}$`, 'i') }
+        // Check if the position is in the uniquePositions array
+        if (!uniquePositions.map(pos => pos.toUpperCase()).includes(position.toUpperCase())) {
+            return res.status(400).json({
+                error: `The position ${position} is not allowed. Only the following positions are allowed: ${uniquePositions.join(', ')}.`
             });
-
-            if (existingPartner) {
-                return res.status(400).json({
-                    error: `A ${existingPartner.position} already exists for this startup.`
-                });
-            }
         }
+
+        // Check if a partner with the same position already exists for the startup
+        const existingPartner = await Partner.findOne({
+            startupId,
+            position: { $regex: new RegExp(`^${position}$`, 'i') }
+        });
+
+        if (existingPartner) {
+            return res.status(400).json({
+                error: `A ${existingPartner.position} already exists for this startup.`
+            });
+        }
+
         const newPartner = new Partner({
             startupId,
             position,
@@ -28,12 +34,11 @@ exports.AddPartner = async (req, res) => {
             state,
             country,
             partner_photo: file
-
-        })
+        });
 
         let result = await newPartner.save();
         return res.status(200).json({
-            message: "patner create successfully",
+            message: "Partner created successfully",
             data: result
         });
 
