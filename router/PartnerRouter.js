@@ -24,5 +24,6 @@ router.post('/AddPartner', auth, upload.single('file'), PartnerController.AddPar
 router.put('/EditPartner/:id',upload.single('file'),auth,PartnerController.EditPartner)
 router.delete('/DeletePartner/:id',auth,PartnerController.DeletePartner)
 router.get('/getPartner/:id',auth,PartnerController.getPartner)
+router.get('/getPartnerById/:id',auth,PartnerController.getPartnerById);
 
 module.exports = router;

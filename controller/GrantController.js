@@ -91,3 +91,19 @@ exports.deleteGrant = async(req,res)=>{
         return res.status(500).send({error})
     }
 }
+
+exports.getGrantById = async(req,res)=>{
+    try {
+        const {id} = req.params;
+        const grant = await Grant.findById(id);
+        if(!grant){
+            return res.status(400).send({message:"grant not found with this id"});
+        }
+        return res.status(200).json({
+            message:"grant retrive successfully",
+            grant:grant
+        })
+    } catch (error) {
+        return res.status(500).send({error:error.message})
+    }
+}

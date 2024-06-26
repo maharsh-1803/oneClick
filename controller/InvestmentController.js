@@ -88,3 +88,19 @@ exports.getInvestment = async(req,res)=>{
         return res.status(500).send({error:error.message});
     }
 }
+
+exports.getInvestmentById = async(req,res)=>{
+    try {
+        const {id} = req.params;
+        const investment = await Investment.findById(id);
+        if(!investment){
+            return res.status(400).send({message:"investment not found with this id"})
+        }
+        return res.status(200).json({
+            message:"investment retrive successfully",
+            investment:investment
+        })
+    } catch (error) {
+        return res.status(500).send({error:error.message})
+    }
+}

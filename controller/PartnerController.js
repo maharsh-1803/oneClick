@@ -129,3 +129,28 @@ exports.getPartner = async (req, res) => {
         return res.status(500).send({ error: error.message });
     }
 };
+
+exports.getPartnerById = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const partner = await Partner.findById(id);
+        const baseURL = "https://oneclick-sfu6.onrender.com/partner";
+
+        if (!partner) {
+            return res.status(400).send({ message: "Partner not found with this ID" });
+        }
+        const photoURL = `${baseURL}/${partner.partner_photo}`;
+        const partnerResponse = {
+            ...partner._doc, 
+            photoURL: photoURL 
+        };
+
+        return res.status(200).json({
+            message: "Partner retrieved successfully",
+            partner: partnerResponse
+        });
+    } catch (error) {
+        return res.status(500).send({ error: error.message });
+    }
+}
+
