@@ -28,6 +28,7 @@ const awardSchema = new mongoose.Schema(
     },
     photos: {
       type: String,
+      default:'../storage/images/award/images.jpeg'
       // required: true,
     },
     description: {
