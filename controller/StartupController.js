@@ -327,7 +327,8 @@ module.exports = class StartupController extends BaseController {
                 }),
                 award: startup.award.map(award => {
                     if (award.photos) {
-                        award.photos = baseURLaward + "/" + award.photos;
+                        // award.photos = baseURLaward + "/" + award.photos;
+                        award.photos="https://oneclick-sfu6.onrender.com/award/images.jpeg"
                     }
                     return award;
                 }),
