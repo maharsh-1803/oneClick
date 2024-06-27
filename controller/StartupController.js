@@ -262,6 +262,30 @@ module.exports = class StartupController extends BaseController {
                         as: "award",
                     },
                 },
+                {
+                    $lookup: {
+                        from: "grants",
+                        localField: "_id",
+                        foreignField: "startupId",
+                        as: "grant",
+                    },
+                },
+                {
+                    $lookup: {
+                        from: "investments",
+                        localField: "_id",
+                        foreignField: "startupId",
+                        as: "investment",
+                    },
+                },
+                {
+                    $lookup: {
+                        from: "partners",
+                        localField: "_id",
+                        foreignField: "startupId",
+                        as: "partner",
+                    },
+                },
             ]);
         }
 
@@ -271,9 +295,10 @@ module.exports = class StartupController extends BaseController {
         const baseURLcertificate = "https://oneclick-sfu6.onrender.com/certificate";
         const baseURLaward = "https://oneclick-sfu6.onrender.com/award";
         const baseURLproduct = "https://oneclick-sfu6.onrender.com/product";
+        const baseURLgrant = "https://oneclick-sfu6.onrender.com/grant";
+        const baseURLinvestment = "https://oneclick-sfu6.onrender.com/investment";
+        const baseURLpartner = "https://oneclick-sfu6.onrender.com/partner";
 
-
-        
         const DetailDataModified = detailData.map(startup => {
             return {
                 ...startup,
@@ -308,17 +333,38 @@ module.exports = class StartupController extends BaseController {
                     }
                     return award;
                 }),
+                grant: startup.grant.map(grant => {
+                    // Assuming grant has a photos field
+                    if (grant.photos) {
+                        grant.photos = baseURLgrant + "/" + grant.photos;
+                    }
+                    return grant;
+                }),
+                investment: startup.investment.map(investment => {
+                    // Assuming investment has a photos field
+                    if (investment.photos) {
+                        investment.photos = baseURLinvestment + "/" + investment.photos;
+                    }
+                    return investment;
+                }),
+                partner: startup.partner.map(partner => {
+                    // Assuming partner has a photos field
+                    if (partner.photos) {
+                        partner.photos = baseURLpartner + "/" + partner.photos;
+                    }
+                    return partner;
+                }),
             };
         });
 
-        console.log("DetailDataModified", DetailDataModified);
+        console.log("detailData", detailData);
         return this.sendJSONResponse(
             res,
             "Startup detail information",
             {
-                length: DetailDataModified.length,
+                length: 1,
             },
-            DetailDataModified
+            detailData
         );
     } catch (error) {
         if (error instanceof NotFound) {
@@ -327,6 +373,7 @@ module.exports = class StartupController extends BaseController {
         return this.sendErrorResponse(req, res, error);
     }
 }
+
 
 
 
