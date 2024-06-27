@@ -28,7 +28,7 @@ const awardSchema = new mongoose.Schema(
     },
     photos: {
       type: String,
-      default:'../storage/images/award/images.jpeg'
+      default:'https://oneclick-sfu6.onrender.com/award/images.jpeg'
       // required: true,
     },
     description: {
