@@ -28,6 +28,7 @@ const productschema = new mongoose.Schema(
     productPhotos: {
       type: Array,
       required: true,
+      default:['https://oneclick-sfu6.onrender.com/product/product.png']
     },
     productprice: {
       type: String,

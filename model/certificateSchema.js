@@ -29,6 +29,7 @@ const certificateSchema = new mongoose.Schema(
     photos: {
       type: String,
       required: true,
+      default:'https://oneclick-sfu6.onrender.com/certificate/images.jpeg'
     },
     description: {
       type: String,
