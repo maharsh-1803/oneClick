@@ -146,151 +146,188 @@ module.exports = class StartupController extends BaseController {
 
   async displayDetail(req, res) {
     try {
-      const tokenData = req.userdata;
-      const startupId = req.query.startupId;
+        const tokenData = req.userdata;
+        const startupId = req.query.startupId;
 
-      const data = await StartupSchema.find({ _id: startupId });
-      // console.log("data", data);
+        const data = await StartupSchema.find({ _id: startupId });
 
-      console.log("tokenData", tokenData.id);
+        console.log("tokenData", tokenData.id);
 
-      let detailData;
+        let detailData;
 
-      if (data.length !== 0) {
-        detailData = await StartupSchema.aggregate([
-          {
-            $match: {
-              _id: mongoose.Types.ObjectId(startupId),
-            },
-          },
-          {
-            $addFields: {
-              categoryId: { $toObjectId: "$categoryId" },
-              subcategoryId: { $toObjectId: "$subcategoryId" },
-              inqubationCenterId: { $toObjectId: "$inqubationCenterId" },
-            },
-          },
-          {
-            $lookup: {
-              from: "categories",
-              localField: "categoryId",
-              foreignField: "_id",
-              as: "category",
-            },
-          },
-          {
-            $lookup: {
-              from: "subcategories",
-              localField: "subcategoryId",
-              foreignField: "_id",
-              as: "subcategory",
-            },
-          },
-          {
-            $lookup: {
-              from: "inqubationcenters",
-              localField: "inqubationCenterId",
-              foreignField: "_id",
-              as: "inqubation",
-            },
-          },
-          {
-            $lookup: {
-              from: "products",
-              localField: "_id",
-              foreignField: "startupId",
-              as: "product",
-              pipeline: [
+        if (data.length !== 0) {
+            detailData = await StartupSchema.aggregate([
                 {
-                  $lookup: {
-                    from: "reviews",
-                    localField: "_id",
-                    foreignField: "productId",
-                    as: "review",
-                    pipeline: [
-                      {
-                        $lookup: {
-                          from: "users",
-                          localField: "userId",
-                          foreignField: "_id",
-                          as: "user",
-                        },
-                      },
-                    ],
-                  },
+                    $match: {
+                        _id: mongoose.Types.ObjectId(startupId),
+                    },
                 },
                 {
-                  $lookup: {
-                    from: "categories",
-                    localField: "categoryId",
-                    foreignField: "_id",
-                    as: "category",
-                  },
+                    $addFields: {
+                        categoryId: { $toObjectId: "$categoryId" },
+                        subcategoryId: { $toObjectId: "$subcategoryId" },
+                        inqubationCenterId: { $toObjectId: "$inqubationCenterId" },
+                    },
                 },
                 {
-                  $lookup: {
-                    from: "subcategories",
-                    localField: "subcategoryId",
-                    foreignField: "_id",
-                    as: "subcategory",
-                  },
+                    $lookup: {
+                        from: "categories",
+                        localField: "categoryId",
+                        foreignField: "_id",
+                        as: "category",
+                    },
                 },
                 {
-                  $addFields: {
-                    categoryName: { $arrayElemAt: ["$category.name", 0] },
-                    subcategoryName: { $arrayElemAt: ["$subcategory.name", 0] },
-                  },
+                    $lookup: {
+                        from: "subcategories",
+                        localField: "subcategoryId",
+                        foreignField: "_id",
+                        as: "subcategory",
+                    },
                 },
                 {
-                  $unset: ["category", "subcategory"], // Remove categoryId and subcategoryId fields
+                    $lookup: {
+                        from: "inqubationcenters",
+                        localField: "inqubationCenterId",
+                        foreignField: "_id",
+                        as: "inqubation",
+                    },
                 },
-              ],
-            },
-          },
-          {
-            $lookup: {
-              from: "certificates",
-              localField: "_id",
-              foreignField: "startupId",
-              as: "certificate",
-            },
-          },
-          {
-            $lookup: {
-              from: "awards",
-              localField: "_id",
-              foreignField: "startupId",
-              as: "award",
-            },
-          },
-        ]);
-      }
+                {
+                    $lookup: {
+                        from: "products",
+                        localField: "_id",
+                        foreignField: "startupId",
+                        as: "product",
+                        pipeline: [
+                            {
+                                $lookup: {
+                                    from: "reviews",
+                                    localField: "_id",
+                                    foreignField: "productId",
+                                    as: "review",
+                                    pipeline: [
+                                        {
+                                            $lookup: {
+                                                from: "users",
+                                                localField: "userId",
+                                                foreignField: "_id",
+                                                as: "user",
+                                            },
+                                        },
+                                    ],
+                                },
+                            },
+                            {
+                                $lookup: {
+                                    from: "categories",
+                                    localField: "categoryId",
+                                    foreignField: "_id",
+                                    as: "category",
+                                },
+                            },
+                            {
+                                $lookup: {
+                                    from: "subcategories",
+                                    localField: "subcategoryId",
+                                    foreignField: "_id",
+                                    as: "subcategory",
+                                },
+                            },
+                            {
+                                $addFields: {
+                                    categoryName: { $arrayElemAt: ["$category.name", 0] },
+                                    subcategoryName: { $arrayElemAt: ["$subcategory.name", 0] },
+                                },
+                            },
+                            {
+                                $unset: ["category", "subcategory"], // Remove categoryId and subcategoryId fields
+                            },
+                        ],
+                    },
+                },
+                {
+                    $lookup: {
+                        from: "certificates",
+                        localField: "_id",
+                        foreignField: "startupId",
+                        as: "certificate",
+                    },
+                },
+                {
+                    $lookup: {
+                        from: "awards",
+                        localField: "_id",
+                        foreignField: "startupId",
+                        as: "award",
+                    },
+                },
+            ]);
+        }
 
-      const baseURL = "https://oneclick-sfu6.onrender.com/startup";
-      const DetailDataModified = detailData.map(startup => {
-        return {
-          ...startup,
-          startupLogoURL: baseURL + "/" + startup.startupLogo // Assuming startupLogo contains only filename
-        };
-      });
+        const baseURLstartup = "https://oneclick-sfu6.onrender.com/startup";
+        const baseURLcategory = "https://oneclick-sfu6.onrender.com/category";
+        const baseURLsubcategory = "https://oneclick-sfu6.onrender.com/subcategory";
+        const baseURLcertificate = "https://oneclick-sfu6.onrender.com/certificate";
+        const baseURLaward = "https://oneclick-sfu6.onrender.com/award";
+        const baseURLproduct = "https://oneclick-sfu6.onrender.com/product";
 
 
-      console.log("detailData", detailData);
-      return this.sendJSONResponse(
-        res,
-        "Startup detail information",
-        {
-          length: 1,
-        },
-        detailData
-      );
+        
+        const DetailDataModified = detailData.map(startup => {
+            return {
+                ...startup,
+                startupLogoURL: baseURLstartup + "/" + startup.startupLogo, // Assuming startupLogo contains only filename
+                category: startup.category.map(cat => {
+                    if (cat.categoryPhoto) {
+                        cat.categoryPhoto = baseURLcategory + "/" + cat.categoryPhoto;
+                    }
+                    return cat;
+                }),
+                subcategory: startup.subcategory.map(subcat => {
+                    if (subcat.subcategoryPhoto) {
+                        subcat.subcategoryPhoto = baseURLsubcategory + "/" + subcat.subcategoryPhoto;
+                    }
+                    return subcat;
+                }),
+                product: startup.product.map(prod => {
+                    return {
+                        ...prod,
+                        productPhotos: prod.productPhotos.map(photo => baseURLproduct + "/" + photo),
+                    };
+                }),
+                certificate: startup.certificate.map(cert => {
+                    if (cert.photos) {
+                        cert.photos = baseURLcertificate + "/" + cert.photos;
+                    }
+                    return cert;
+                }),
+                award: startup.award.map(award => {
+                    if (award.photos) {
+                        award.photos = baseURLaward + "/" + award.photos;
+                    }
+                    return award;
+                }),
+            };
+        });
+
+        console.log("DetailDataModified", DetailDataModified);
+        return this.sendJSONResponse(
+            res,
+            "Startup detail information",
+            {
+                length: DetailDataModified.length,
+            },
+            DetailDataModified
+        );
     } catch (error) {
-      if (error instanceof NotFound) {
-        throw error;
-      }
-      return this.sendErrorResponse(req, res, error);
+        if (error instanceof NotFound) {
+            throw error;
+        }
+        return this.sendErrorResponse(req, res, error);
     }
-  }
+}
+
 
 
 
