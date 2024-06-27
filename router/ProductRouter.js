@@ -43,4 +43,8 @@ router.get("/subcategory_by_product", auth, (req, res) =>
   productcontroller.productdisplay_By_sub_category(req, res)
 )
 
+router.get('/getProductsByStartupId/:id',auth,(req,res)=>
+  productcontroller.productDisplayByStartupId(req,res)
+)
+
 module.exports = router;
