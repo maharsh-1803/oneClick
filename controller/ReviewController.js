@@ -123,33 +123,30 @@ module.exports = class ReviewController extends BaseController {
     }
   }
  
-  async  getReviewbyproductId(req, res) {
+  async getReviewbyproductId(req, res) {
     try {
         const { id } = req.params;
-
-        // Fetch reviews for the given product ID
         const reviews = await ReviewSchema.find({ productId: id });
 
-        // If reviews are found, fetch usernames for each review
         if (reviews.length > 0) {
-            // Extract all userIds from reviews
             const userIds = reviews.map(review => review.userId);
-
-            // Fetch usernames from User collection based on userIds
             const users = await UserSchema.find({ _id: { $in: userIds } });
-
-            // Create a map of userIds to usernames for quick lookup
             const userIdToUsernameMap = {};
+            const baseURL = "https://oneclick-sfu6.onrender.com/user";
+
             users.forEach(user => {
-                userIdToUsernameMap[user._id.toString()] = user.name;
+                userIdToUsernameMap[user._id.toString()] = {
+                    name: user.name,
+                    profilePicture: user.profilePicture ? `${baseURL}/${user.profilePicture}` : null
+                };
             });
 
-            // Map usernames to reviews
             const reviewsWithUsernames = reviews.map(review => ({
                 _id: review._id,
                 stars: review.stars,
                 userId: review.userId,
-                name: userIdToUsernameMap[review.userId.toString()] || 'Unknown',
+                name: userIdToUsernameMap[review.userId.toString()].name || 'Unknown',
+                profilePicture: userIdToUsernameMap[review.userId.toString()].profilePicture || 'Unknown',
                 detail: review.detail,
                 productId: review.productId,
                 createdAt: review.createdAt,
@@ -170,4 +167,3 @@ module.exports = class ReviewController extends BaseController {
     }
 }
 }
-
