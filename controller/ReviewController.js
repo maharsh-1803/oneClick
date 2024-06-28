@@ -2,6 +2,7 @@ const BaseController = require("./BaseController");
 const BadRequest = require("../errors/BadRequest");
 const NotFound = require("../errors/NotFound");
 const ReviewSchema = require("../model/ReviewSchema");
+const UserSchema = require('../model/UserSchema')
 const jwt = require("jsonwebtoken");
 
 module.exports = class ReviewController extends BaseController {
@@ -121,16 +122,52 @@ module.exports = class ReviewController extends BaseController {
       return this.sendErrorResponse(req, res, error);
     }
   }
-  async getReviewbyproductId(req,res){
+ 
+  async  getReviewbyproductId(req, res) {
     try {
-      const {id} = req.params;
-      const reviews = await ReviewSchema.find({productId:id});
-      return res.status(200).json({
-        message:"review retrive successfully",
-        reviews:reviews
-      })
+        const { id } = req.params;
+
+        // Fetch reviews for the given product ID
+        const reviews = await ReviewSchema.find({ productId: id });
+
+        // If reviews are found, fetch usernames for each review
+        if (reviews.length > 0) {
+            // Extract all userIds from reviews
+            const userIds = reviews.map(review => review.userId);
+
+            // Fetch usernames from User collection based on userIds
+            const users = await UserSchema.find({ _id: { $in: userIds } });
+
+            // Create a map of userIds to usernames for quick lookup
+            const userIdToUsernameMap = {};
+            users.forEach(user => {
+                userIdToUsernameMap[user._id.toString()] = user.name;
+            });
+
+            // Map usernames to reviews
+            const reviewsWithUsernames = reviews.map(review => ({
+                _id: review._id,
+                stars: review.stars,
+                userId: review.userId,
+                name: userIdToUsernameMap[review.userId.toString()] || 'Unknown',
+                detail: review.detail,
+                productId: review.productId,
+                createdAt: review.createdAt,
+                updatedAt: review.updatedAt
+            }));
+
+            return res.status(200).json({
+                message: "Reviews retrieved successfully",
+                reviews: reviewsWithUsernames
+            });
+        } else {
+            return res.status(404).json({
+                message: "No reviews found for the given product ID"
+            });
+        }
     } catch (error) {
-      return res.status(500).send({error:error.message})
+        return res.status(500).send({ error: error.message });
     }
-  }
-};
+}
+}
+
