@@ -1,5 +1,12 @@
 const mongoose = require("mongoose");
 
+function getISTTime() {
+    const istOffset = 5.5 * 60 *60 * 1000; // IST is UTC +5:30
+    const now = new Date();
+    const istTime = new Date(now.getTime() + istOffset);
+    return istTime;
+  }
+
 const subCategorySchema = new mongoose.Schema({
     name: {
         type: String,
@@ -16,7 +23,11 @@ const subCategorySchema = new mongoose.Schema({
         ref: "category"
     }
 
-}, { timestamps: true })
+}, {
+    timestamps: {
+      currentTime: () => getISTTime() 
+    }
+  })
 
 const subcategory = new mongoose.model('subcategory', subCategorySchema);
 

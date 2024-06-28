@@ -1,5 +1,12 @@
 const mongoose = require("mongoose");
 
+function getISTTime() {
+    const istOffset = 5.5 * 60 *60 * 1000; // IST is UTC +5:30
+    const now = new Date();
+    const istTime = new Date(now.getTime() + istOffset);
+    return istTime;
+  }
+
 const reviewschema = new mongoose.Schema({
     stars: {
         type: Number,
@@ -26,7 +33,12 @@ const reviewschema = new mongoose.Schema({
         ref: "product"
     },
 
-}, { timestamps: true })
+}, {
+    timestamps: {
+      currentTime: () => getISTTime() 
+    }
+  }
+)
 
 const review = new mongoose.model('review', reviewschema);
 

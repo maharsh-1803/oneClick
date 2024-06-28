@@ -41,29 +41,38 @@ module.exports = class ReviewController extends BaseController {
   async review_edit(req, res) {
     try {
       const tokenData = req.userdata;
-
       const review_id = req.query.review_id;
-
-      const newReview = await ReviewSchema.updateOne(
-        { userId: tokenData._id, _id: review_id },
-        req.body
+  
+      const updatedReview = await ReviewSchema.findOneAndUpdate(
+        {  _id: review_id },
+        req.body,
+        { new: true } 
       );
-
-      return this.sendJSONResponse(
-        res,
-        "Updated data",
-        {
-          length: 1,
-        },
-        newReview
-      );
-    } catch (error) {
-      if (error instanceof NotFound) {
-        throw error;
+  
+      if (!updatedReview) {
+        return res.status(404).json({
+          success: false,
+          message: "Review not found",
+        });
       }
-      return this.sendErrorResponse(req, res, error);
+  
+      return res.status(200).json({
+        success: true,
+        message: "Updated data",
+        data: {
+          length: 1,
+          review: updatedReview,
+        },
+      });
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        message: "An error occurred",
+        error: error.message,
+      });
     }
   }
+  
 
   async review_delete(req, res) {
     try {
@@ -71,8 +80,7 @@ module.exports = class ReviewController extends BaseController {
 
       const review_id = req.query.review_id;
 
-      const newReview = await ReviewSchema.deleteOne({
-        userId: tokenData._id,
+      const newReview = await ReviewSchema.findByIdAndDelete({
         _id: review_id,
       });
 

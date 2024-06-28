@@ -1,5 +1,12 @@
 const mongoose = require('mongoose');
 
+function getISTTime() {
+    const istOffset = 5.5 * 60 *60 * 1000; // IST is UTC +5:30
+    const now = new Date();
+    const istTime = new Date(now.getTime() + istOffset);
+    return istTime;
+  }
+
 const GrantSchema = new mongoose.Schema({
     startupId:{
         type:mongoose.Schema.Types.ObjectId,
@@ -25,7 +32,11 @@ const GrantSchema = new mongoose.Schema({
     other_details:{
         type:String
     }
-},{timestamps:true})
+},{
+    timestamps: {
+      currentTime: () => getISTTime() 
+    }
+  })
 
 const Grant = mongoose.model('Grant',GrantSchema);
 

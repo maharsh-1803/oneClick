@@ -5,6 +5,7 @@ const StartupSchema = require("../model/StartupSchema");
 const categorySchema = require("../model/CategorySchema");
 const subCategorySchema = require("../model/SubcategorySchema");
 const inqubatoincenterschema = require("../model/InqubationcenterSchema");
+const reviewSchema = require('../model/ReviewSchema');
 const jwt = require("jsonwebtoken");
 const fs = require("fs");
 const mongoose = require("mongoose");
@@ -506,6 +507,21 @@ module.exports = class StartupController extends BaseController {
         throw error;
       }
       return this.sendErrorResponse(req, res, error);
+    }
+  }
+  async reviewDisplay(req,res){
+    try {
+      const {id} = req.params;
+      const reviews = await reviewSchema.find({startupId:id});
+      if(!reviews){
+        return res.status(400).send({message:"review not found"});
+      }
+      return res.status(200).json({
+        message:"review retrive successfully",
+        reviews:reviews
+      })
+    } catch (error) {
+      return res.status(500).send({error:error.message});
     }
   }
 };

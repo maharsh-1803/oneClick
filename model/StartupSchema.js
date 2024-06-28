@@ -1,5 +1,12 @@
 const mongoose = require("mongoose");
 
+function getISTTime() {
+  const istOffset = 5.5 * 60 *60 * 1000; // IST is UTC +5:30
+  const now = new Date();
+  const istTime = new Date(now.getTime() + istOffset);
+  return istTime;
+}
+
 const startupschema = new mongoose.Schema(
   {
     userId: {
@@ -112,7 +119,11 @@ const startupschema = new mongoose.Schema(
       enum: ["active", "deactive", "block"],
     },
   },
-  { timestamps: true }
+  {
+    timestamps: {
+      currentTime: () => getISTTime() 
+    }
+  }
 );
 
 const startup = new mongoose.model("startup", startupschema);

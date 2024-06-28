@@ -33,4 +33,8 @@ router.get("/displaycenterId", auth, (req, res) =>
   startupcontroller.displaycenterId(req, res)
 ); //done
 
+router.get('/getReview/:id',auth,(req,res)=>
+  startupcontroller.reviewDisplay(req,res)
+);
+
 module.exports = router;

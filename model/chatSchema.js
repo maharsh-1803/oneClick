@@ -1,4 +1,10 @@
 const mongoose = require("mongoose");
+function getISTTime() {
+    const istOffset = 5.5 * 60 *60 * 1000; // IST is UTC +5:30
+    const now = new Date();
+    const istTime = new Date(now.getTime() + istOffset);
+    return istTime;
+  }
 
 const chatSchema = new mongoose.Schema({
     inquiryId: {
@@ -20,9 +26,12 @@ const chatSchema = new mongoose.Schema({
         type: Date,
         default: Date.now
     },
-    createdAt: { type: Date, default: Date.now }, // Add createdAt field with default value
-    updatedAt: { type: Date, default: Date.now }, // Add updatedAt field with default value
-});
+}, {
+    timestamps: {
+      currentTime: () => getISTTime() 
+    }
+  }
+);
 
 const chat =  mongoose.model('chat', chatSchema)
 module.exports = chat;

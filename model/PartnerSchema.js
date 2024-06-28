@@ -1,5 +1,12 @@
 const mongoose = require('mongoose');
 
+function getISTTime() {
+    const istOffset = 5.5 * 60 *60 * 1000; // IST is UTC +5:30
+    const now = new Date();
+    const istTime = new Date(now.getTime() + istOffset);
+    return istTime;
+  }
+
 const PartnerSchema = new mongoose.Schema({
     startupId: {
         type: mongoose.Schema.Types.ObjectId,
@@ -34,7 +41,11 @@ const PartnerSchema = new mongoose.Schema({
         type: String,
         require: true
     }
-}, { timestamps: true })
+}, {
+    timestamps: {
+      currentTime: () => getISTTime() 
+    }
+  })
 
 const Partner = mongoose.model('Partner', PartnerSchema);
 module.exports = Partner;
