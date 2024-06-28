@@ -121,4 +121,16 @@ module.exports = class ReviewController extends BaseController {
       return this.sendErrorResponse(req, res, error);
     }
   }
+  async getReviewbyproductId(req,res){
+    try {
+      const id = req.params;
+      const reviews = await ReviewSchema.find({productId:id});
+      return res.status(200).json({
+        message:"review retrive successfully",
+        reviews:reviews
+      })
+    } catch (error) {
+      return res.status(500).send({error:error.message})
+    }
+  }
 };
