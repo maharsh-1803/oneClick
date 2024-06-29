@@ -170,10 +170,23 @@ module.exports = class ReviewController extends BaseController {
     async display(req,res){
       try {
         const tokenData = req.userdata;
-        const allReview = await ReviewSchema.find({ userId: tokenData.id }).populate('productId', 'productName').populate('userId','name');
+        const allReview = await ReviewSchema.find({ userId: tokenData.id }).populate('productId', 'productName').populate('userId','name profilePicture');
+        const reviewsWithFullURL = allReview.map(review => ({
+          _id: review._id,
+          stars: review.stars,
+          detail: review.detail,
+          productId: review.productId,
+          userId: {
+              _id: review.userId._id,
+              name: review.userId.name,
+              profilePicture: baseURL + "/" + review.userId.profilePicture 
+          },
+          createdAt: review.createdAt,
+          updatedAt: review.updatedAt
+      }));
         return res.status(200).json({
           message:"Review retrived successfully",
-          data:allReview
+          data:reviewsWithFullURL
         })
       } catch (error) {
         return res.status(500).send({error:error.message})
