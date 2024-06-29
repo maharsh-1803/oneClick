@@ -139,7 +139,9 @@ module.exports = class ReviewController extends BaseController {
             startupId: 1,
             'product.productName': 1,
             'user_details.name': 1,
-            'user_details.profilePicture': 1
+            'user_details.profilePicture': 1,
+            createdAt: 1,
+            updatedAt: 1,
           }
         }
       ])
