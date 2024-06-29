@@ -104,14 +104,14 @@ module.exports = class ReviewController extends BaseController {
   async display(req, res) {
     try {
       const tokenData = req.userdata;
-
-      const allReview = await ReviewSchema.find({ userId: tokenData.id });
-
+  
+      const allReview = await ReviewSchema.find({ userId: tokenData.id }).populate('productId', 'productName');
+  
       return this.sendJSONResponse(
         res,
         "All Reviews",
         {
-          length: 1,
+          length: allReview.length,
         },
         allReview
       );
@@ -122,6 +122,7 @@ module.exports = class ReviewController extends BaseController {
       return this.sendErrorResponse(req, res, error);
     }
   }
+  
  
   async getReviewbyproductId(req, res) {
     try {
