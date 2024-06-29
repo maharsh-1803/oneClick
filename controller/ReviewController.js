@@ -104,69 +104,82 @@ module.exports = class ReviewController extends BaseController {
     }
   }
 
-  async display(req, res) {
-    try {
-      const tokenData = req.userdata;
+  // async display(req, res) {
+  //   try {
+  //     const tokenData = req.userdata;
 
-      // const allReview = await ReviewSchema.find({ userId: tokenData.id }).populate('productId', 'productName').populate('userId','name');
+  //     // const allReview = await ReviewSchema.find({ userId: tokenData.id }).populate('productId', 'productName').populate('userId','name');
 
-      const allReview = await ReviewSchema.aggregate([
-        {
-          $match: { userId: new mongoose.Types.ObjectId(tokenData.id) }
-        },
-        {
-          $lookup: {
-            from: "products",
-            localField: "productId",
-            foreignField: "_id",
-            as: "product",
-          }
-        },
-        {
-          $lookup: {
-            from: "users",
-            localField: "userId",
-            foreignField: "_id",
-            as: "user_details",
-          }
-        },
-        {
-          $project: {
-            _id: 1,
-            detail: 1,
-            stars: 1,
-            productId: 1,
-            startupId: 1,
-            'product.productName': 1,
-            'user_details.name': 1,
-            'user_details.profilePicture': 1,
-            createdAt: 1,
-            updatedAt: 1,
-          }
-        }
-      ])
+  //     const allReview = await ReviewSchema.aggregate([
+  //       {
+  //         $match: { userId: new mongoose.Types.ObjectId(tokenData.id) }
+  //       },
+  //       {
+  //         $lookup: {
+  //           from: "products",
+  //           localField: "productId",
+  //           foreignField: "_id",
+  //           as: "product",
+  //         }
+  //       },
+  //       {
+  //         $lookup: {
+  //           from: "users",
+  //           localField: "userId",
+  //           foreignField: "_id",
+  //           as: "user_details",
+  //         }
+  //       },
+  //       {
+  //         $project: {
+  //           _id: 1,
+  //           detail: 1,
+  //           stars: 1,
+  //           productId: 1,
+  //           startupId: 1,
+  //           'product.productName': 1,
+  //           'user_details.name': 1,
+  //           'user_details.profilePicture': 1,
+  //           createdAt: 1,
+  //           updatedAt: 1,
+  //         }
+  //       }
+  //     ])
 
-      const userDataWithProfileImageURL = allReview.map(user => ({
-        ...user,
-        'profilePicture': baseURL + "/" + user.user_details[0].profilePicture
-      }));
+  //     const userDataWithProfileImageURL = allReview.map(user => ({
+  //       ...user,
+  //       'profilePicture': baseURL + "/" + user.user_details[0].profilePicture
+  //     }));
 
 
-      return this.sendJSONResponse(
-        res,
-        "All Reviews",
-        {
-          length: allReview.length,
-        },
-        userDataWithProfileImageURL
-      );
-    } catch (error) {
-      if (error instanceof NotFound) {
-        throw error;
+  //     return this.sendJSONResponse(
+  //       res,
+  //       "All Reviews",
+  //       {
+  //         length: allReview.length,
+  //       },
+  //       userDataWithProfileImageURL
+  //     );
+  //   } catch (error) {
+  //     if (error instanceof NotFound) {
+  //       throw error;
+  //     }
+  //     return this.sendErrorResponse(req, res, error);
+  //   }
+  // }
+    async display(req,res){
+      try {
+        const tokenData = req.userdata;
+        const allReview = await ReviewSchema.find({ userId: tokenData.id }).populate('productId', 'productName').populate('userId','name');
+        return res.status(200).json({
+          message:"Review retrived successfully",
+          data:allReview
+        })
+      } catch (error) {
+        return res.status(500).send({error:error.message})
       }
-      return this.sendErrorResponse(req, res, error);
     }
-  }
+
 
 
   async getReviewbyproductId(req, res) {
