@@ -105,7 +105,7 @@ module.exports = class ReviewController extends BaseController {
     try {
       const tokenData = req.userdata;
   
-      const allReview = await ReviewSchema.find({ userId: tokenData.id }).populate('productId', 'productName');
+      const allReview = await ReviewSchema.find({ userId: tokenData.id }).populate('productId', 'productName').populate('userId','name');
   
       return this.sendJSONResponse(
         res,
